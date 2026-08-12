@@ -263,6 +263,7 @@ what this tool drives.
 
 ## License
 
-[MIT](LICENSE) — for this console. Claude Code itself is Anthropic software
-that you install and license yourself.
+[MIT](LICENSE) — for this console only. It does not cover Claude Code, which is
+Anthropic software you install and license yourself, and it grants no rights to
+Anthropic's trademarks.
 
