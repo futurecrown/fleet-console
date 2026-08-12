@@ -1,0 +1,184 @@
+# Architecture
+
+How the console works internally — and which traps showed up along the way.
+For usage see the [README](../README.md), for colors and spacing
+[DESIGNSYSTEM.md](../DESIGNSYSTEM.md).
+
+## The basic idea
+
+The console is **not an agent framework**. It builds no prompts, calls no model
+API and keeps no conversation state. It starts the `claude` CLI as a child
+process and reads its event stream.
+
+```
+Browser ──HTTP──▶ Next.js (Node) ──spawn──▶ claude -p --output-format stream-json
+   ▲                    │                        │
+   └────────SSE─────────┘◀──────stdout (JSONL)───┘
+```
+
+The most important consequence: **the login is inherited.** There is no API
+key and no separate billing. Runs count against the same quota as interactive
+work in the terminal.
+
+Second consequence: the console orchestrates *agents*, not *model calls*. Every
+role is a complete Claude Code session with its own context window, working
+directory and process. Frameworks like CrewAI or LangGraph sit one layer below
+that and therefore solve a different problem.
+
+## Two ways to involve a role
+
+|  | Agent tool | Role run |
+|---|---|---|
+| Who decides | the model | the console |
+| Process | inside the orchestrator's context | its own process |
+| Trigger | text in the system prompt | a button |
+| Reliable | no | yes |
+| Accounting | attributed via `parent_tool_use_id` | measured directly |
+
+The first path was the only one for a long time, and it is the sore point:
+whether a role gets involved is up to the model. A round could end without any
+review — the console notices and says so (`Runde beendet, ohne eine einzige
+Rolle zu beauftragen`), but noticing is not preventing.
+
+The role run is the answer to that. `src/lib/sessions.ts` → `runPipeline()`.
+
+## The event stream
+
+`handleEvent()` processes four event types:
+
+- **`system`** (`subtype: init`) — carries the `session_id`. It is the key for
+  `--resume` and therefore for resuming interrupted sessions.
+- **`assistant`** — usage (tokens), text blocks, `tool_use` blocks. If the call
+  is named `Agent` or `Task`, the role node is derived from `subagent_type` and
+  the `tool_use_id` is remembered.
+- **`user`** — contains `tool_result`. The remembered `tool_use_id` routes the
+  result to the right node.
+- **`result`** — end of the round.
+
+### `parent_tool_use_id`
+
+When roles are selected, the session runs with `--forward-subagent-text`.
+Subagent events then arrive in the same stream, marked with
+`parent_tool_use_id`. Only with that is it visible *what* a role does while it
+works — before, the time between delegation and reply was a black box in which
+the graph could only show "running".
+
+The same marker allows token attribution: every `usage` with a
+`parent_tool_use_id` belongs to the role, every one without belongs to the
+orchestrator.
+
+## Traps
+
+Ordered by how much damage they did.
+
+### Do not sum cache tokens
+
+`cache_read_input_tokens` reports the same context again on **every** request.
+Summed up, a one-liner ended up showing 56,734 input tokens. The correct way:
+sum fresh input, and show cache reads as a maximum next to it.
+
+### The security stop hook fires inside role sessions too
+
+The hook asks *every* session to start the `security-reviewer` through the
+Agent tool. A role does not have that tool and then burns turns explaining
+that it can't — measured at 4 requests instead of 2. Role runs therefore set
+`SECURITY_REVIEW_GATE=off`; the hook script provides that off switch itself.
+
+### `--settings '{"hooks":{}}'` does not disable hooks
+
+Settings are merged, and an empty object removes nothing. Tested and
+discarded.
+
+### "Last line is assistant" does not mean aborted
+
+Interactive sessions have no end marker. That criterion flagged nearly every
+transcript as aborted. The correct rule: aborted = a `tool_use` without a
+matching `tool_result`.
+
+### The folder name under `~/.claude/projects` cannot be reversed
+
+It is the path with `/` → `-`. Real folder names contain hyphens themselves, so
+the mapping is not unique. The project path therefore always comes from the
+`cwd` field inside the transcript.
+
+### Feedback loop between canvas height and parent height
+
+A `ResizeObserver` that computes the canvas height from the parent height,
+while the canvas co-determines that parent height, inflates the graph to tens
+of thousands of pixels. `.stage` is therefore set to `flex: 1 1 0;
+min-height: 0`, with the canvas positioned absolutely on top.
+
+### A physics simulation that never settles
+
+The graph is force-based. Without a stop condition it runs 60 frames per
+second forever — and the chips are a moving target. Playwright could not click
+them ("element is not stable"), and a human hits them only with effort. The
+simulation therefore halts once nobody is working and the motion has decayed;
+any state change wakes it up again.
+
+## Role runs in detail
+
+```
+runPipeline(id, roles, { model, task, state })
+  │
+  ├─ sammleArbeitsstand()      git status + git diff HEAD + new files
+  │                            ONCE, not per role
+  ├─ assign order              stable numbering despite parallelism
+  │
+  └─ queue, N at a time
+        └─ laufeRolle()        claude -p --agent <role> [--model]
+              ├─ time limit    SIGTERM, SIGKILL after GRACE_SEC
+              ├─ tokens        counted per role
+              └─ full text     reports/<run>-<role>.md
+```
+
+**The working state is collected once.** Before, every role gathered the same
+thing separately — with five roles, five times over. Measured on the same
+case: **1 request instead of 12.**
+
+That requires the second version of the review task
+(`PRUEFAUFTRAG_MIT_STAND`). With the old wording ("collect it yourself with
+`git diff HEAD`"), the role would have fetched everything again despite the
+attached state, and the saving would have evaporated.
+
+The node only shows the instruction plus a note about the size of the
+attachment. The state itself is not included — otherwise 60 KB would travel
+through the event stream on every event and end up in storage.
+
+**The model comes from the role file.** Leave out `--model` and the CLI reads
+`model:` from `~/.claude/agents/<role>.md`. The `security-reviewer` runs on
+Opus that way, the rest on Sonnet. The selector can force one model for all of
+them instead.
+
+## Storage and resuming
+
+Session state is written continuously to `~/.claude/fleet-console/runs/` and
+`reports/`, throttled to at most once every two seconds.
+
+Sessions live in the Node process. Restart the server and they are gone there —
+but the conversation still exists on Claude's side. `listSessions()` therefore
+merges storage back in: runs recorded as running that are no longer in memory
+count as **interrupted**. `resumeSession()` restarts the process with
+`--resume <claudeSessionId>` and restores nodes, feed and answers from storage.
+
+A running **role run** does not survive this — the role processes die with the
+server. Reports written up to that point remain.
+
+## What is deliberately missing
+
+Comparing notes with [Paperclip](https://github.com/paperclipai/paperclip) was
+what triggered the role run. Only the execution model was adopted, not the
+corporate scaffolding: no tickets, no org chart, no approvals, no budgets, no
+Postgres. That is built for organisations with many agents and several people.
+Here, one person works.
+
+Also deliberately absent:
+
+- **No multi-user, no authentication.** The server binds to localhost. Whoever
+  reaches the API starts processes in someone else's project directories — and
+  under someone else's Claude account, which the terms of use do not allow (see
+  the README section on terms of use).
+- **No budget stop.** The only brakes are `--autocompact` and the per-role time
+  limit.
+- **No agent frameworks.** They need an API key with metered billing; this
+  console deliberately inherits the subscription.

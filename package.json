@@ -1,0 +1,30 @@
+{
+  "name": "fleet-console",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local agent console for Claude Code — start sessions and watch them live, run roles as their own sessions, keep history and hooks in view",
+  "license": "MIT",
+  "author": "Ivan Walbrunn",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iwalbrunn/fleet-console.git"
+  },
+  "scripts": {
+    "dev": "next dev -p 4300",
+    "build": "next build",
+    "start": "next start -p 4300",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@phosphor-icons/web": "^2.1.1",
+    "next": "^15.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.7.0"
+  }
+}

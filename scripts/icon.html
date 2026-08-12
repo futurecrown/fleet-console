@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- Vorlage für das Programmsymbol: die Raute aus der Kopfzeile der Konsole,
+     in den Nocturne-Farben. Wird von scripts/icon.sh mit Playwright
+     abfotografiert und zu einer .icns-Datei gemacht. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html, body { margin: 0; padding: 0; }
+      /* Durchsichtig: macOS erwartet die abgerundete Kachel mit freiem Rand,
+         nicht ein randfüllendes Quadrat. */
+      body {
+        width: 1024px;
+        height: 1024px;
+        display: grid;
+        place-items: center;
+        background: transparent;
+      }
+      .rahmen {
+        width: 824px;
+        height: 824px;
+        display: grid;
+        place-items: center;
+        border-radius: 185px;
+        background:
+          radial-gradient(ellipse 60% 50% at 50% 40%, rgba(145,132,217,.22), transparent 70%),
+          radial-gradient(rgba(233,233,237,.05) 2px, transparent 2px) 0 0 / 64px 64px,
+          #161826;
+      }
+      .raute {
+        width: 380px;
+        height: 380px;
+        border: 34px solid #9184d9;
+        border-radius: 92px;
+        transform: rotate(45deg);
+        box-shadow: 0 0 120px rgba(145,132,217,.75), inset 0 0 60px rgba(145,132,217,.35);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rahmen"><div class="raute"></div></div>
+  </body>
+</html>
