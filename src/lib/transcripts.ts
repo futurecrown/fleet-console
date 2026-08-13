@@ -82,7 +82,8 @@ function toolUses(lines: Line[]) {
     const content = l.message?.content
     if (!Array.isArray(content)) continue
     for (const b of content) {
-      if (b?.type === 'tool_use' && typeof b.name === 'string') uses.push({ name: b.name, input: b.input ?? {} })
+      if (b?.type === 'tool_use' && typeof b.name === 'string')
+        uses.push({ name: b.name, input: b.input ?? {} })
     }
   }
   return uses
@@ -140,7 +141,7 @@ function summarize(file: string, lines: Line[]): RunSummary | null {
   const securityChecked = uses.some(
     (u) =>
       (u.name === 'Agent' || u.name === 'Task') &&
-      String(u.input?.subagent_type ?? u.input?.description ?? '').includes('security'),
+      String(u.input?.subagent_type ?? u.input?.description ?? '').includes('security')
   )
 
   return {
@@ -193,7 +194,7 @@ export async function listRuns(limit = 200): Promise<RunSummary[]> {
       const run = summarize(file, parseLines(raw))
       cache.set(file, { mtimeMs: stat.mtimeMs, run })
       if (run) runs.push(run)
-    }),
+    })
   )
 
   runs.sort((a, b) => b.started.localeCompare(a.started))
@@ -218,8 +219,8 @@ export async function getRun(id: string): Promise<RunDetail | null> {
       uses
         .filter((u) => u.name === 'Write' || u.name === 'Edit' || u.name === 'NotebookEdit')
         .map((u) => String(u.input?.file_path ?? ''))
-        .filter(Boolean),
-    ),
+        .filter(Boolean)
+    )
   ).slice(0, 40)
 
   const toolCounts = new Map<string, number>()
@@ -238,7 +239,11 @@ export async function getRun(id: string): Promise<RunDetail | null> {
     if (lines[i].type !== 'assistant') continue
     const t = textOf(lines[i].message?.content).trim()
     if (!t) continue
-    for (const para of t.split('\n').map((s) => s.trim()).filter(Boolean).reverse()) {
+    for (const para of t
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .reverse()) {
       if (summary.length >= 4) break
       if (para.length < 12) continue
       summary.unshift(para.replace(/^[-*#>\s]+/, '').slice(0, 220))
@@ -266,6 +271,8 @@ export async function getRun(id: string): Promise<RunDetail | null> {
     artifacts,
     findings,
     agents: [...agentCounts].map(([name, calls]) => ({ name, calls })),
-    tools: [...toolCounts].map(([name, calls]) => ({ name, calls })).sort((a, b) => b.calls - a.calls),
+    tools: [...toolCounts]
+      .map(([name, calls]) => ({ name, calls }))
+      .sort((a, b) => b.calls - a.calls),
   }
 }

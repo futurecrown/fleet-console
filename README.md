@@ -7,10 +7,10 @@ browse past runs, manage hooks and scheduled night runs.
 
 ![The console during a role run](docs/screenshots/konsole.webp)
 
-*Three roles working at the same time, each in its own session. The feed on
+_Three roles working at the same time, each in its own session. The feed on
 the right shows what happened before that: the round ended without the
 orchestrator delegating to a single role — which is exactly why the role run
-exists.*
+exists._
 
 Built from the design draft "Fleet Console for agent visualisation" in the
 **Nocturne** design system (`src/app/nocturne.css`, described in
@@ -89,12 +89,12 @@ as a child process in the selected project directory. The stream is parsed and
 pushed to the browser over server-sent events: live feed, token counters and
 the graph. Every role is a node; when the orchestrator calls it through the
 Agent tool, the node goes active and its edge shows flow. The input box at the
-bottom right sends further messages into a *running* session — that is what
+bottom right sends further messages into a _running_ session — that is what
 `--input-format stream-json` is for.
 
 When roles are selected, the session also runs with
 `--forward-subagent-text`. Subagent events then arrive in the same stream,
-identified by `parent_tool_use_id`. Only with that does the graph show *what*
+identified by `parent_tool_use_id`. Only with that does the graph show _what_
 a role is doing, and only then can its tokens be attributed to it — before,
 the time between delegation and reply was a black box.
 
@@ -126,7 +126,7 @@ point before — a round could end without any review at all.
   role task (up to `FLEET_DIFF_MAX`, 60,000 characters by default, truncated
   beyond that). Before, every role gathered the same thing separately — with
   five roles, five times over. Measured on the same case: **1 request instead
-  of 12.** You can turn it off with *Stand mitgeben*; each role then gets the
+  of 12.** You can turn it off with _Stand mitgeben_; each role then gets the
   instruction to collect it itself again.
   If there is nothing uncommitted and no custom task was typed, nothing starts
   at all — rather than sending five roles at an empty diff.
@@ -139,17 +139,17 @@ point before — a round could end without any review at all.
   node.
 - The full reply is written to `reports/<run>-<role>.md`.
 
-Role runs set `SECURITY_REVIEW_GATE=off`. Otherwise the stop hook asks *every*
+Role runs set `SECURITY_REVIEW_GATE=off`. Otherwise the stop hook asks _every_
 session to start the `security-reviewer` through the Agent tool — a tool a
 role does not even have. It then burns turns explaining that it can't. The
-role run *is* the review.
+role run _is_ the review.
 
 ![Configuring a role run](docs/screenshots/rollenlauf.webp)
 
 **Important:** none of the roles in `~/.claude/agents` has `Edit` or `Write` —
 deliberately. A review that writes to the same code in parallel causes more
 trouble than it is worth. So a role run **judges**, it does not implement. A
-custom task does not change that; it only moves *what* is being judged.
+custom task does not change that; it only moves _what_ is being judged.
 
 Clicking a chip opens the side panel: task, usage, duration and the full reply.
 
@@ -240,18 +240,18 @@ what this tool drives.
 
 ## Where data lives
 
-| Path | Contents |
-|---|---|
-| `~/.claude/projects/*/*.jsonl` | Source of the history view (read only) |
-| `~/.claude/fleet-console/runs/` | State of runs started here, written continuously |
+| Path                               | Contents                                            |
+| ---------------------------------- | --------------------------------------------------- |
+| `~/.claude/projects/*/*.jsonl`     | Source of the history view (read only)              |
+| `~/.claude/fleet-console/runs/`    | State of runs started here, written continuously    |
 | `~/.claude/fleet-console/reports/` | Final text per run, plus `<run>-<role>.md` per role |
-| `~/.claude/fleet-console/gate.log` | Triggers of the security stop hook |
+| `~/.claude/fleet-console/gate.log` | Triggers of the security stop hook                  |
 
 ## Limits
 
 - Sessions live inside the server's Node process. Restart it and they appear
   as **interrupted**: the state comes back from disk, the conversation comes
-  back from Claude via `--resume`. Clicking *fortsetzen* (resume) picks them up
+  back from Claude via `--resume`. Clicking _fortsetzen_ (resume) picks them up
   again. Runs without a Claude session ID — the process never got that far —
   count as aborted.
 - A running role run does **not** survive a server restart; the role processes
@@ -266,4 +266,3 @@ what this tool drives.
 [MIT](LICENSE) — for this console only. It does not cover Claude Code, which is
 Anthropic software you install and license yourself, and it grants no rights to
 Anthropic's trademarks.
-

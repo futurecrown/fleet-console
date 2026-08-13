@@ -1,0 +1,66 @@
+{
+  "navigation": {
+    "console": "Konsole",
+    "history": "Verläufe",
+    "hooks": "Hooks & Einstellungen"
+  },
+  "project": {
+    "title": "Projekt",
+    "directory": "Projektverzeichnis",
+    "none": "— keines —",
+    "loadState": "Arbeitsstand als Kontext"
+  },
+  "roles": {
+    "title": "Rollen",
+    "noRolesFound": "Keine Rollen in ~/.claude/agents gefunden.",
+    "none": "— keine —"
+  },
+  "model": {
+    "title": "Modell",
+    "auto": "Automatisch (wie in Rolle/System)",
+    "forAll": "für alle:",
+    "allTo": "alle auf"
+  },
+  "session": {
+    "start": "Session starten",
+    "cancel": "Abbrechen",
+    "clear": "Leeren",
+    "interrupted": "Session unterbrochen — der Serverprozess ist gegangen. Die Unterhaltung liegt noch bei Claude.",
+    "resume": "fortsetzen"
+  },
+  "stats": {
+    "tokens": "Tokens",
+    "out": "aus",
+    "in": "ein",
+    "cache": "Cache",
+    "requests": "Anfragen",
+    "duration": "Dauer"
+  },
+  "feed": {
+    "title": "Live-Feed",
+    "waiting": "wartet",
+    "filterAll": "alles",
+    "filterTools": "werkzeuge",
+    "filterRoles": "rollen",
+    "noItems": "— nichts in dieser Auswahl —",
+    "of": "von"
+  },
+  "messages": {
+    "placeholderWartet": "Antworten und weitermachen …",
+    "placeholderRunning": "Nachricht an die Session …",
+    "send": "Senden",
+    "attach": "mitschicken:",
+    "all": "alle"
+  },
+  "roleRun": {
+    "noRoleAlert": "Diese Runde lief ohne Rolle — kein Review erfolgt. Der Rollenlauf holt es nach, ohne den Orchestrator zu fragen.",
+    "startRun": "Rollenlauf starten",
+    "taskReset": "Auftrag zurücksetzen",
+    "attachState": "Stand mitgeben",
+    "attachStateTitle": "Der Arbeitsstand wird einmal ermittelt und allen Rollen mitgegeben, statt dass ihn jede selbst zusammensucht",
+    "emptyTaskNote": "Leerer Auftrag = Prüfung des uncommitteten Stands. Jeder andere Text geht jeder Rolle wörtlich zu."
+  },
+  "waitState": {
+    "waitingFor": "Antwort liegt vor — die Session wartet seit {time} auf deine Rückmeldung."
+  }
+}

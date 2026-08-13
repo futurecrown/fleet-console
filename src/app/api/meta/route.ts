@@ -7,12 +7,20 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const [projects, roles, sessions] = await Promise.all([listProjects(), listRoles(), listSessions()])
+  const [projects, roles, sessions] = await Promise.all([
+    listProjects(),
+    listRoles(),
+    listSessions(),
+  ])
   return NextResponse.json({
     projects,
     roles,
     models: MODELS,
     sessions: sessions.slice(0, 20),
-    pipeline: { standardAuftrag: PRUEFAUFTRAG, standardModell: PIPELINE_MODEL, timeoutSec: ROLE_TIMEOUT_SEC },
+    pipeline: {
+      standardAuftrag: PRUEFAUFTRAG,
+      standardModell: PIPELINE_MODEL,
+      timeoutSec: ROLE_TIMEOUT_SEC,
+    },
   })
 }

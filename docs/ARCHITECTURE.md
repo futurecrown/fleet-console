@@ -20,20 +20,20 @@ The most important consequence: **the login is inherited.** There is no API
 key and no separate billing. Runs count against the same quota as interactive
 work in the terminal.
 
-Second consequence: the console orchestrates *agents*, not *model calls*. Every
+Second consequence: the console orchestrates _agents_, not _model calls_. Every
 role is a complete Claude Code session with its own context window, working
 directory and process. Frameworks like CrewAI or LangGraph sit one layer below
 that and therefore solve a different problem.
 
 ## Two ways to involve a role
 
-|  | Agent tool | Role run |
-|---|---|---|
-| Who decides | the model | the console |
-| Process | inside the orchestrator's context | its own process |
-| Trigger | text in the system prompt | a button |
-| Reliable | no | yes |
-| Accounting | attributed via `parent_tool_use_id` | measured directly |
+|             | Agent tool                          | Role run          |
+| ----------- | ----------------------------------- | ----------------- |
+| Who decides | the model                           | the console       |
+| Process     | inside the orchestrator's context   | its own process   |
+| Trigger     | text in the system prompt           | a button          |
+| Reliable    | no                                  | yes               |
+| Accounting  | attributed via `parent_tool_use_id` | measured directly |
 
 The first path was the only one for a long time, and it is the sore point:
 whether a role gets involved is up to the model. A round could end without any
@@ -59,7 +59,7 @@ The role run is the answer to that. `src/lib/sessions.ts` → `runPipeline()`.
 
 When roles are selected, the session runs with `--forward-subagent-text`.
 Subagent events then arrive in the same stream, marked with
-`parent_tool_use_id`. Only with that is it visible *what* a role does while it
+`parent_tool_use_id`. Only with that is it visible _what_ a role does while it
 works — before, the time between delegation and reply was a black box in which
 the graph could only show "running".
 
@@ -79,7 +79,7 @@ sum fresh input, and show cache reads as a maximum next to it.
 
 ### The security stop hook fires inside role sessions too
 
-The hook asks *every* session to start the `security-reviewer` through the
+The hook asks _every_ session to start the `security-reviewer` through the
 Agent tool. A role does not have that tool and then burns turns explaining
 that it can't — measured at 4 requests instead of 2. Role runs therefore set
 `SECURITY_REVIEW_GATE=off`; the hook script provides that off switch itself.

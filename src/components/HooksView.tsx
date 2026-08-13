@@ -57,7 +57,9 @@ export default function HooksView() {
     const res = await fetch('/api/vps', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ runs: next.map(({ name, schedule, command }) => ({ name, schedule, command })) }),
+      body: JSON.stringify({
+        runs: next.map(({ name, schedule, command }) => ({ name, schedule, command })),
+      }),
     })
     const data = await res.json()
     setSaving(false)
@@ -73,8 +75,12 @@ export default function HooksView() {
   return (
     <div style={{ gridColumn: '2 / 4', padding: 18, overflowY: 'auto', minWidth: 0 }}>
       <div style={{ marginBottom: 14 }}>
-        <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 16 }}>Hooks &amp; Automation</div>
-        <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>Trigger, Nachtläufe und Zustellung</div>
+        <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 16 }}>
+          Hooks &amp; Automation
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
+          Trigger, Nachtläufe und Zustellung
+        </div>
       </div>
 
       {msg && (
@@ -82,7 +88,14 @@ export default function HooksView() {
           className={msg.kind === 'err' ? 'banner' : ''}
           style={
             msg.kind === 'ok'
-              ? { border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: '8px 11px', fontSize: 12, marginBottom: 12, color: 'var(--color-accent-300)' }
+              ? {
+                  border: '1px solid var(--color-divider)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '8px 11px',
+                  fontSize: 12,
+                  marginBottom: 12,
+                  color: 'var(--color-accent-300)',
+                }
               : { marginBottom: 12 }
           }
         >
@@ -90,21 +103,36 @@ export default function HooksView() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(330px,1fr))', gap: 14, alignItems: 'start', maxWidth: 1120 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit,minmax(330px,1fr))',
+          gap: 14,
+          alignItems: 'start',
+          maxWidth: 1120,
+        }}
+      >
         {/* Security-Gate */}
         <div className="card elev-sm" style={{ gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
             <i className="ph ph-lightning" style={{ color: 'var(--color-accent)', fontSize: 17 }} />
             <span style={{ fontSize: 14, fontWeight: 500, flex: 1 }}>security-reviewer</span>
-            <span className={`tag ${hooks?.gateInstalled ? 'tag-accent' : 'tag-outline'}`} style={{ fontSize: 10 }}>
+            <span
+              className={`tag ${hooks?.gateInstalled ? 'tag-accent' : 'tag-outline'}`}
+              style={{ fontSize: 10 }}
+            >
               {hooks?.gateInstalled ? 'scharf' : 'nicht installiert'}
             </span>
           </div>
           <div style={{ fontSize: 12, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>
-            Stop-Hook: startet nach jeder Session mit uncommitteten Änderungen an sicherheitsrelevanten Dateien.
+            Stop-Hook: startet nach jeder Session mit uncommitteten Änderungen an
+            sicherheitsrelevanten Dateien.
           </div>
           {hooks?.gateScript && (
-            <div className="mono" style={{ fontSize: 10.5, color: 'var(--color-neutral-500)', wordBreak: 'break-all' }}>
+            <div
+              className="mono"
+              style={{ fontSize: 10.5, color: 'var(--color-neutral-500)', wordBreak: 'break-all' }}
+            >
               {hooks.gateScript}
             </div>
           )}
@@ -113,7 +141,10 @@ export default function HooksView() {
           </div>
           {hooks?.gateRuns.length ? (
             hooks.gateRuns.map((h, i) => (
-              <div key={i} style={{ display: 'flex', gap: 10, fontSize: 11.5, alignItems: 'baseline' }}>
+              <div
+                key={i}
+                style={{ display: 'flex', gap: 10, fontSize: 11.5, alignItems: 'baseline' }}
+              >
                 <span className="mono" style={{ color: 'var(--color-neutral-500)', flex: 'none' }}>
                   {h.date}
                 </span>
@@ -122,16 +153,24 @@ export default function HooksView() {
               </div>
             ))
           ) : (
-            <div style={{ fontSize: 11.5, color: 'var(--color-neutral-500)' }}>Noch nicht ausgelöst.</div>
+            <div style={{ fontSize: 11.5, color: 'var(--color-neutral-500)' }}>
+              Noch nicht ausgelöst.
+            </div>
           )}
         </div>
 
         {/* Nachtläufe vps02 */}
         <div className="card elev-sm" style={{ gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <i className="ph ph-moon-stars" style={{ color: 'var(--color-accent)', fontSize: 17 }} />
+            <i
+              className="ph ph-moon-stars"
+              style={{ color: 'var(--color-accent)', fontSize: 17 }}
+            />
             <span style={{ fontSize: 14, fontWeight: 500, flex: 1 }}>Nachtläufe · vps02</span>
-            <span className={`tag ${vps?.connected ? 'tag-accent' : 'tag-outline'}`} style={{ fontSize: 10 }}>
+            <span
+              className={`tag ${vps?.connected ? 'tag-accent' : 'tag-outline'}`}
+              style={{ fontSize: 10 }}
+            >
               {vps?.connected ? 'verbunden' : 'offline'}
             </span>
           </div>
@@ -146,7 +185,9 @@ export default function HooksView() {
               </div>
               <div className="split">
                 <span>Fremde Cron-Zeilen</span>
-                <span style={{ color: 'var(--color-text)' }}>{vps.otherLines} (bleiben unberührt)</span>
+                <span style={{ color: 'var(--color-text)' }}>
+                  {vps.otherLines} (bleiben unberührt)
+                </span>
               </div>
               {vps.lastRun && (
                 <div className="split">
@@ -158,13 +199,24 @@ export default function HooksView() {
           )}
 
           {runs.map((r, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--color-divider)', paddingTop: 8 }}>
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+                borderTop: '1px solid var(--color-divider)',
+                paddingTop: 8,
+              }}
+            >
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <input
                   className="input mono"
                   style={{ width: 110, fontSize: 11 }}
                   value={r.schedule}
-                  onChange={(e) => setRuns(runs.map((x, j) => (j === i ? { ...x, schedule: e.target.value } : x)))}
+                  onChange={(e) =>
+                    setRuns(runs.map((x, j) => (j === i ? { ...x, schedule: e.target.value } : x)))
+                  }
                 />
                 <span style={{ fontSize: 12, flex: 1 }}>{r.name}</span>
                 <button
@@ -179,7 +231,9 @@ export default function HooksView() {
                 className="input mono"
                 style={{ fontSize: 10.5, minHeight: 56 }}
                 value={r.command}
-                onChange={(e) => setRuns(runs.map((x, j) => (j === i ? { ...x, command: e.target.value } : x)))}
+                onChange={(e) =>
+                  setRuns(runs.map((x, j) => (j === i ? { ...x, command: e.target.value } : x)))
+                }
               />
             </div>
           ))}
@@ -191,14 +245,23 @@ export default function HooksView() {
               onClick={() =>
                 setRuns([
                   ...runs,
-                  { name: `nachtlauf-${runs.length + 1}`, schedule: '0 2 * * *', command: vps?.template ?? '', line: '' },
+                  {
+                    name: `nachtlauf-${runs.length + 1}`,
+                    schedule: '0 2 * * *',
+                    command: vps?.template ?? '',
+                    line: '',
+                  },
                 ])
               }
             >
               <i className="ph ph-plus" />
               Nachtlauf
             </button>
-            <button className="btn btn-primary" disabled={!vps?.connected || saving} onClick={() => saveRuns(runs)}>
+            <button
+              className="btn btn-primary"
+              disabled={!vps?.connected || saving}
+              onClick={() => saveRuns(runs)}
+            >
               <i className="ph ph-cloud-arrow-up" />
               Auf vps02 schreiben
             </button>
@@ -208,9 +271,16 @@ export default function HooksView() {
         {/* settings.json */}
         <div className="card elev-sm" style={{ gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <i className="ph ph-brackets-curly" style={{ color: 'var(--color-accent)', fontSize: 17 }} />
+            <i
+              className="ph ph-brackets-curly"
+              style={{ color: 'var(--color-accent)', fontSize: 17 }}
+            />
             <span style={{ fontSize: 14, fontWeight: 500, flex: 1 }}>hooks in settings.json</span>
-            <button className="btn btn-ghost" style={{ fontSize: 12 }} onClick={() => setEditing(!editing)}>
+            <button
+              className="btn btn-ghost"
+              style={{ fontSize: 12 }}
+              onClick={() => setEditing(!editing)}
+            >
               {editing ? 'Abbrechen' : 'Bearbeiten'}
             </button>
           </div>

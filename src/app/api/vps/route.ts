@@ -20,7 +20,7 @@ export async function PUT(req: Request) {
         name: String(r.name ?? ''),
         schedule: String(r.schedule ?? ''),
         command: String(r.command ?? ''),
-      })),
+      }))
     )
   } catch (err: any) {
     return NextResponse.json({ error: err?.message ?? String(err) }, { status: 400 })
