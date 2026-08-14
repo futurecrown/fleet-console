@@ -1,9 +1,11 @@
 'use client'
+import { useLocale } from 'next-intl'
 
 import { useEffect, useState } from 'react'
 import { fmtDate, fmtDuration, fmtTokens, type RunDetail, type RunSummary } from '@/lib/types'
 
 export default function RunsView() {
+  const locale = useLocale()
   const [runs, setRuns] = useState<RunSummary[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [detail, setDetail] = useState<RunDetail | null>(null)
@@ -132,7 +134,7 @@ export default function RunsView() {
               <span
                 style={{ color: 'var(--color-neutral-400)', fontVariantNumeric: 'tabular-nums' }}
               >
-                {fmtDate(run.started)}
+                {fmtDate(run.started, locale)}
               </span>
               <span
                 style={{
@@ -197,8 +199,8 @@ export default function RunsView() {
                 </div>
                 <div className="card-meta">
                   {detail.projectShort}
-                  {detail.gitBranch ? ` · ${detail.gitBranch}` : ''} · {fmtDate(detail.started)} ·{' '}
-                  {fmtDuration(detail.durationMs)}
+                  {detail.gitBranch ? ` · ${detail.gitBranch}` : ''} ·{' '}
+                  {fmtDate(detail.started, locale)} · {fmtDuration(detail.durationMs)}
                 </div>
               </div>
 

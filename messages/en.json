@@ -2,7 +2,8 @@
   "navigation": {
     "console": "Console",
     "history": "History",
-    "hooks": "Hooks & Settings"
+    "hooks": "Hooks & Settings",
+    "toggleLanguage": "Toggle Language"
   },
   "project": {
     "title": "Project",

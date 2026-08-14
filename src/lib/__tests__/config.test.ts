@@ -1,11 +1,25 @@
-import { test, expect, describe } from 'vitest'
-import { PIPELINE_PARALLEL, ROLE_TIMEOUT_SEC, GRACE_SEC, DIFF_MAX } from '../config'
+import { test, expect, describe, beforeAll, afterAll } from 'vitest'
+
+const ORIGINAL_ENV = process.env
 
 describe('Config', () => {
-  test('has expected configs defined or defaults', () => {
-    expect(PIPELINE_PARALLEL).toBe(3)
-    expect(ROLE_TIMEOUT_SEC).toBe(900)
-    expect(GRACE_SEC).toBe(10)
-    expect(DIFF_MAX).toBe(60000)
+  beforeAll(() => {
+    process.env = { ...ORIGINAL_ENV }
+    delete process.env.FLEET_PIPELINE_PARALLEL
+    delete process.env.FLEET_ROLE_TIMEOUT_SEC
+    delete process.env.FLEET_GRACE_SEC
+    delete process.env.FLEET_DIFF_MAX
+  })
+
+  afterAll(() => {
+    process.env = ORIGINAL_ENV
+  })
+
+  test('has expected configs defined or defaults', async () => {
+    const config = await import('../config')
+    expect(config.PIPELINE_PARALLEL).toBe(3)
+    expect(config.ROLE_TIMEOUT_SEC).toBe(900)
+    expect(config.GRACE_SEC).toBe(10)
+    expect(config.DIFF_MAX).toBe(60000)
   })
 })

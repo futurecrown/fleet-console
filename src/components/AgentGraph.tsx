@@ -63,14 +63,16 @@ export default function AgentGraph({
   /** Physik: Ort und Geschwindigkeit je Knoten. Lebt über Renders hinweg. */
   const sim = useRef(new Map<string, Teilchen>())
 
-  nodesRef.current = nodes
-  for (const n of nodes) {
-    const vorher = prevStatus.current?.get(n.id)
-    if (vorher === 'running' && n.status !== 'running' && n.status !== 'idle') {
-      burstUntil.current?.set(n.id, Date.now() + 2200)
+  useEffect(() => {
+    nodesRef.current = nodes
+    for (const n of nodes) {
+      const vorher = prevStatus.current?.get(n.id)
+      if (vorher === 'running' && n.status !== 'running' && n.status !== 'idle') {
+        burstUntil.current?.set(n.id, Date.now() + 2200)
+      }
+      prevStatus.current?.set(n.id, n.status)
     }
-    prevStatus.current?.set(n.id, n.status)
-  }
+  }, [nodes])
 
   useEffect(() => {
     const wrap = wrapRef.current

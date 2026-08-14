@@ -1,5 +1,5 @@
 /* Nocturne — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
 
 :root {
   --color-bg: #161826;
@@ -190,6 +190,7 @@ figcaption {
 .hr {
   height: 1px;
   border: 0;
+
   margin: var(--space-4) 0;
   background: linear-gradient(
     to right,

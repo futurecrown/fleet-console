@@ -1,5 +1,23 @@
 import { useTranslations } from 'next-intl'
 
+export interface SessionSidebarProps {
+  projects: any[]
+  project: string
+  setProject: (id: string) => void
+  sessionInfo: any
+  mitStand: boolean
+  setMitStand: (val: boolean) => void
+  roles: any[]
+  model: string
+  setModel: (id: string) => void
+  MODELS: any[]
+  loading: boolean
+  running: boolean
+  start: () => void
+  cancel: () => void
+  clear: () => void
+}
+
 export function SessionSidebar({
   projects,
   project,
@@ -16,7 +34,7 @@ export function SessionSidebar({
   start,
   cancel,
   clear,
-}: any) {
+}: SessionSidebarProps) {
   const t = useTranslations()
 
   return (

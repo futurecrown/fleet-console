@@ -28,7 +28,9 @@ const ROLE_ICONS: Record<string, string> = {
   'ux-ui-expert': 'ph-layout',
 }
 
+import { useLocale } from 'next-intl'
 export default function Page() {
+  const locale = useLocale()
   const t = useTranslations()
   const [tab, setTab] = useState<Tab>('konsole')
 
@@ -1565,7 +1567,7 @@ export default function Page() {
                       </div>
                     )}
                     <div className="feedrow">
-                      <span className="feedtime">{fmtTime(l.t).slice(0, 5)}</span>
+                      <span className="feedtime">{fmtTime(l.t, locale).slice(0, 5)}</span>
                       <span className="feedtext">{l.text}</span>
                     </div>
                   </div>
