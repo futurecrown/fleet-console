@@ -615,7 +615,7 @@ export default function Page() {
             FLEET
           </div>
           <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
-            Lokale Agenten-Konsole
+            Local Agent Console
           </div>
         </div>
         <nav style={{ display: 'flex', gap: 6 }}>
@@ -624,17 +624,17 @@ export default function Page() {
             data-active={tab === 'konsole'}
             onClick={() => setTab('konsole')}
           >
-            Konsole
+            {t('navigation.console')}
           </button>
           <button
             className="navbtn"
             data-active={tab === 'verlaeufe'}
             onClick={() => setTab('verlaeufe')}
           >
-            Verläufe
+            {t('navigation.history')}
           </button>
           <button className="navbtn" data-active={tab === 'hooks'} onClick={() => setTab('hooks')}>
-            Hooks
+            {t('navigation.hooks')}
           </button>
         </nav>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -724,14 +724,14 @@ export default function Page() {
       {tab === 'konsole' && (
         <aside className="sidebar" style={{ display: links === 0 ? 'none' : undefined }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div className="kicker">{prozessLebt ? 'Laufende Session' : 'Neue Session'}</div>
+            <div className="kicker">{prozessLebt ? t('sidebar.runningSession') : t('sidebar.newSession')}</div>
 
             {/* Der Projektordner steht im Prozessaufruf und lässt sich nicht
               mehr ändern. Eine bedienbare Auswahl würde das Gegenteil
               behaupten — also steht hier nur noch, was gilt. */}
             {prozessLebt ? (
               <div className="field">
-                <label>Projekt · fest</label>
+                <label>{t('project.title')} · {t('tips.fixed')}</label>
                 <div
                   className="input"
                   style={{
@@ -764,7 +764,7 @@ export default function Page() {
               </div>
             ) : (
               <div className="field">
-                <label>Projekt</label>
+                <label>{t('project.title')}</label>
                 <select
                   className="input"
                   value={projectId}
@@ -825,11 +825,11 @@ export default function Page() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
               <div style={{ fontSize: 12, color: 'var(--color-neutral-400)' }}>
-                Modell
+                {t('model.title')}
                 {prozessLebt && (
                   <span style={{ color: 'var(--color-neutral-600)' }}>
                     {' '}
-                    · wirkt erst über Übernehmen
+                    · takes effect via Apply
                   </span>
                 )}
               </div>
@@ -851,11 +851,11 @@ export default function Page() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <div style={{ fontSize: 12, color: 'var(--color-neutral-400)', marginBottom: 4 }}>
-                Rollen · ~/.claude/agents
+                {t('roles.title')} · ~/.claude/agents
               </div>
               {roles.length === 0 && (
                 <div style={{ fontSize: 11.5, color: 'var(--color-neutral-500)' }}>
-                  Keine Rollen gefunden.
+                  {t('roles.noRolesFound')}
                 </div>
               )}
               {roles.map((r) => {
@@ -958,12 +958,12 @@ export default function Page() {
               </div>
             ) : (
               <div className="field">
-                <label>Prompt</label>
+                <label>{t('sidebar.prompt')}</label>
                 <textarea
                   className="input"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Was soll die Session tun?"
+                  placeholder={t('sidebar.promptPlaceholder')}
                 />
               </div>
             )}
@@ -986,7 +986,7 @@ export default function Page() {
               }}
             >
               <div>
-                <div style={{ fontSize: 13 }}>Auto-Permissions</div>
+                <div style={{ fontSize: 13 }}>{t('sidebar.autoPermissions')}</div>
                 <div className="mono" style={{ fontSize: 10, color: 'var(--color-neutral-500)' }}>
                   --dangerously-skip-permissions
                 </div>
@@ -1054,7 +1054,7 @@ export default function Page() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div className="kicker">Automation</div>
+            <div className="kicker">{t('sidebar.automation')}</div>
             <button
               className="card"
               style={{ gap: 4, cursor: 'pointer', textAlign: 'left' }}
@@ -1065,7 +1065,7 @@ export default function Page() {
                   className="ph ph-moon-stars"
                   style={{ color: 'var(--color-accent)', fontSize: 15 }}
                 />
-                Nachtlauf · vps02
+                {t('sidebar.nightRun')}
                 <span className="tag tag-outline" style={{ marginLeft: 'auto', fontSize: 10 }}>
                   verwalten
                 </span>
@@ -1087,7 +1087,7 @@ export default function Page() {
                 Hook · security-reviewer
               </div>
               <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
-                Startet automatisch nach Sessions mit Code-Änderungen
+                {t('sidebar.startsAutomatically')}
               </div>
             </button>
           </div>
@@ -1118,13 +1118,13 @@ export default function Page() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {session ? session.prompt.slice(0, 70) : 'Keine laufende Session'}
+                  {session ? session.prompt.slice(0, 70) : t('main.noSession')}
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
                   {session
                     ? `${session.project.replace(/^\/Users\/[^/]+/, '~')} · ${session.model} · ${session.roles.length} Rollen` +
                       (wartet ? ` · Antwort fertig, wartet seit ${wartetSeit} auf Eingabe` : '')
-                    : 'Links Projekt, Modell und Rollen wählen'}
+                    : t('main.selectLeft')}
                 </div>
               </div>
               <div
@@ -1147,7 +1147,7 @@ export default function Page() {
                       style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
                     />
                     <i className="ph ph-tree-structure" style={{ fontSize: 13 }} />
-                    Rollen
+                    {t('main.roles')}
                   </label>
                   <label className="seg-opt" style={{ padding: '4px 10px', fontSize: 12 }}>
                     <input
@@ -1161,7 +1161,7 @@ export default function Page() {
                       style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
                     />
                     <i className="ph ph-article" style={{ fontSize: 13 }} />
-                    Antwort{antwortenAnzeige.length > 1 ? ` (${antwortenAnzeige.length})` : ''}
+                    {t('main.answer')}{antwortenAnzeige.length > 1 ? ` (${antwortenAnzeige.length})` : ''}
                     {neueAntwort && ansicht !== 'antwort' && (
                       <span
                         style={{
@@ -1201,12 +1201,12 @@ export default function Page() {
                       color: 'var(--color-text)',
                     }}
                   >
-                    Keine laufende Session
+                    {t('main.noSession')}
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.6 }}>
                     Links Projekt, Modell und Rollen wählen, Auftrag eintippen, starten. Der Verlauf
                     früherer Läufe steht unter{' '}
-                    <strong style={{ color: 'var(--color-neutral-300)' }}>Verläufe</strong>.
+                    <strong style={{ color: 'var(--color-neutral-300)' }}>{t('navigation.history')}</strong>.
                   </div>
                 </div>
               </div>
