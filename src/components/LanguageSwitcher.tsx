@@ -11,7 +11,7 @@ export function LanguageSwitcher() {
 
   const toggleLanguage = () => {
     const nextLocale = locale === 'de' ? 'en' : 'de'
-    router.replace(pathname, { locale: nextLocale })
+    router.push(pathname, { locale: nextLocale })
   }
 
   return (

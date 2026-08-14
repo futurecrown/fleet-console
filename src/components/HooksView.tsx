@@ -1,9 +1,11 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import type { HooksView as HooksData, NightRun, VpsStatus } from '@/lib/types'
 
 export default function HooksView() {
+  const t = useTranslations()
   const [hooks, setHooks] = useState<HooksData | null>(null)
   const [vps, setVps] = useState<VpsStatus | null>(null)
   const [draft, setDraft] = useState('')
@@ -42,13 +44,13 @@ export default function HooksView() {
     const data = await res.json()
     setSaving(false)
     if (!res.ok) {
-      setMsg({ kind: 'err', text: data.error ?? 'Speichern fehlgeschlagen' })
+      setMsg({ kind: 'err', text: data.error ?? t('hooks.saveFailed') })
       return
     }
     setHooks(data)
     setDraft(data.raw)
     setEditing(false)
-    setMsg({ kind: 'ok', text: 'settings.json geschrieben (Sicherung daneben abgelegt).' })
+    setMsg({ kind: 'ok', text: t('hooks.saved') })
   }
 
   const saveRuns = async (next: NightRun[]) => {
@@ -64,22 +66,22 @@ export default function HooksView() {
     const data = await res.json()
     setSaving(false)
     if (!res.ok) {
-      setMsg({ kind: 'err', text: data.error ?? 'Crontab konnte nicht geschrieben werden' })
+      setMsg({ kind: 'err', text: data.error ?? t('hooks.cronFailed') })
       return
     }
     setVps(data)
     setRuns(data.runs ?? [])
-    setMsg({ kind: 'ok', text: 'Crontab auf vps02 aktualisiert.' })
+    setMsg({ kind: 'ok', text: t('hooks.cronUpdated') })
   }
 
   return (
     <div style={{ gridColumn: '2 / 4', padding: 18, overflowY: 'auto', minWidth: 0 }}>
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 16 }}>
-          Hooks &amp; Automation
+          {t('hooks.title')}
         </div>
         <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
-          Trigger, Nachtläufe und Zustellung
+          {t('hooks.subtitle')}
         </div>
       </div>
 
@@ -121,12 +123,11 @@ export default function HooksView() {
               className={`tag ${hooks?.gateInstalled ? 'tag-accent' : 'tag-outline'}`}
               style={{ fontSize: 10 }}
             >
-              {hooks?.gateInstalled ? 'scharf' : 'nicht installiert'}
+              {hooks?.gateInstalled ? t('hooks.gateActive') : t('hooks.notInstalled')}
             </span>
           </div>
           <div style={{ fontSize: 12, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>
-            Stop-Hook: startet nach jeder Session mit uncommitteten Änderungen an
-            sicherheitsrelevanten Dateien.
+            {t('hooks.gateDescription')}
           </div>
           {hooks?.gateScript && (
             <div
@@ -137,7 +138,7 @@ export default function HooksView() {
             </div>
           )}
           <div className="kicker" style={{ letterSpacing: '.1em' }}>
-            Letzte Auslösungen
+            {t('hooks.lastRuns')}
           </div>
           {hooks?.gateRuns.length ? (
             hooks.gateRuns.map((h, i) => (
@@ -154,7 +155,7 @@ export default function HooksView() {
             ))
           ) : (
             <div style={{ fontSize: 11.5, color: 'var(--color-neutral-500)' }}>
-              Noch nicht ausgelöst.
+              {t('hooks.notYetTriggered')}
             </div>
           )}
         </div>
@@ -171,7 +172,7 @@ export default function HooksView() {
               className={`tag ${vps?.connected ? 'tag-accent' : 'tag-outline'}`}
               style={{ fontSize: 10 }}
             >
-              {vps?.connected ? 'verbunden' : 'offline'}
+              {vps?.connected ? t('hooks.connected') : t('hooks.offline')}
             </span>
           </div>
 
@@ -180,13 +181,13 @@ export default function HooksView() {
           {vps?.connected && (
             <>
               <div className="split">
-                <span>Claude auf dem Server</span>
+                <span>{t('hooks.claudeOnServer')}</span>
                 <span style={{ color: 'var(--color-text)' }}>{vps.claudeVersion || '—'}</span>
               </div>
               <div className="split">
-                <span>Fremde Cron-Zeilen</span>
+                <span>{t('hooks.otherCronLines')}</span>
                 <span style={{ color: 'var(--color-text)' }}>
-                  {vps.otherLines} (bleiben unberührt)
+                  {vps.otherLines} ({t('hooks.unchanged')})
                 </span>
               </div>
               {vps.lastRun && (

@@ -63,5 +63,46 @@
   },
   "waitState": {
     "waitingFor": "Response is ready — the session has been waiting for your reply since {time}."
+  },
+  "runs": {
+    "title": "History",
+    "reading": "reading transcripts…",
+    "count": "runs from ~/.claude/projects",
+    "search": "Search…",
+    "allProjects": "all projects",
+    "withRoles": "with roles only",
+    "dateHeader": "Date",
+    "runHeader": "Run",
+    "durationHeader": "Duration",
+    "tokensHeader": "Tokens",
+    "securityHeader": "Security",
+    "statusHeader": "Status",
+    "report": "Report",
+    "selectRun": "Select run…",
+    "noMatch": "No run matches this selection.",
+    "noTranscripts": "No transcripts found.",
+    "tools": "Tools",
+    "roles": "Roles",
+    "summary": "Summary",
+    "participants": "Participants",
+    "artifacts": "Artifacts"
+  },
+  "hooks": {
+    "title": "Hooks & Automation",
+    "subtitle": "Triggers, night runs, and delivery",
+    "gateActive": "active",
+    "notInstalled": "not installed",
+    "gateDescription": "Stop hook: runs after every session with uncommitted changes to security-relevant files.",
+    "lastRuns": "Last Triggers",
+    "notYetTriggered": "Not yet triggered.",
+    "connected": "connected",
+    "offline": "offline",
+    "claudeOnServer": "Claude on Server",
+    "otherCronLines": "Other Cron Lines",
+    "unchanged": "(remain untouched)",
+    "saveFailed": "Save failed",
+    "cronFailed": "Could not write crontab",
+    "saved": "settings.json written (backup placed next to it).",
+    "cronUpdated": "Crontab updated on vps02."
   }
 }

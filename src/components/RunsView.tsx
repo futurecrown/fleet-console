@@ -1,11 +1,12 @@
 'use client'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { useEffect, useState } from 'react'
 import { fmtDate, fmtDuration, fmtTokens, type RunDetail, type RunSummary } from '@/lib/types'
 
 export default function RunsView() {
   const locale = useLocale()
+  const t = useTranslations()
   const [runs, setRuns] = useState<RunSummary[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [detail, setDetail] = useState<RunDetail | null>(null)
@@ -67,19 +68,19 @@ export default function RunsView() {
       >
         <div>
           <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 16 }}>
-            Verläufe
+            {t('runs.title')}
           </div>
           <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
             {loading
-              ? 'lese Transcripts …'
-              : `${sichtbar.length} von ${runs.length} Läufen aus ~/.claude/projects`}
+              ? t('runs.reading')
+              : `${sichtbar.length} ${t('feed.of')} ${runs.length} ${t('runs.count')}`}
           </div>
         </div>
 
         <div className="toolbar">
           <input
             className="input"
-            placeholder="Suchen …"
+            placeholder={t('runs.search')}
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
             style={{ flex: '1 1 220px', maxWidth: 380 }}
@@ -90,7 +91,7 @@ export default function RunsView() {
             onChange={(e) => setProjekt(e.target.value)}
             style={{ width: 220 }}
           >
-            <option value="alle">alle Projekte</option>
+            <option value="alle">{t('runs.allProjects')}</option>
             {projekte.map((p) => (
               <option key={p} value={p}>
                 {p}
@@ -98,7 +99,7 @@ export default function RunsView() {
             ))}
           </select>
           <button className="chip" data-on={nurRollen} onClick={() => setNurRollen(!nurRollen)}>
-            nur mit Rollen
+            {t('runs.withRoles')}
           </button>
         </div>
 
@@ -115,12 +116,12 @@ export default function RunsView() {
             borderBottom: 'none',
           }}
         >
-          <span>Datum</span>
-          <span>Lauf</span>
-          <span>Dauer</span>
-          <span>Tokens</span>
-          <span>Security</span>
-          <span>Status</span>
+          <span>{t('runs.dateHeader')}</span>
+          <span>{t('runs.runHeader')}</span>
+          <span>{t('runs.durationHeader')}</span>
+          <span>{t('runs.tokensHeader')}</span>
+          <span>{t('runs.securityHeader')}</span>
+          <span>{t('runs.statusHeader')}</span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -179,7 +180,7 @@ export default function RunsView() {
           ))}
           {!loading && !sichtbar.length && (
             <div style={{ color: 'var(--color-neutral-500)', fontSize: 12, padding: 12 }}>
-              {runs.length ? 'Kein Lauf passt zu dieser Auswahl.' : 'Keine Transcripts gefunden.'}
+              {runs.length ? t('runs.noMatch') : t('runs.noTranscripts')}
             </div>
           )}
         </div>
@@ -187,9 +188,9 @@ export default function RunsView() {
 
       <div style={{ width: 430, flex: 'none', overflowY: 'auto' }}>
         <div className="card elev-sm" style={{ gap: 12 }}>
-          <div className="card-kicker">Bericht</div>
+          <div className="card-kicker">{t('runs.report')}</div>
           {!detail && (
-            <div style={{ fontSize: 12, color: 'var(--color-neutral-500)' }}>Lauf auswählen …</div>
+            <div style={{ fontSize: 12, color: 'var(--color-neutral-500)' }}>{t('runs.selectRun')}</div>
           )}
           {detail && (
             <>
@@ -206,16 +207,16 @@ export default function RunsView() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
                 <Stat
-                  label="Tokens"
+                  label={t('stats.tokens')}
                   value={fmtTokens(detail.tokensIn + detail.tokensOut)}
                   hint={`+ ${fmtTokens(detail.tokensCached)} Cache`}
                 />
-                <Stat label="Werkzeuge" value={String(detail.toolCalls)} />
-                <Stat label="Rollen" value={String(detail.agentCalls)} />
+                <Stat label={t('runs.tools')} value={String(detail.toolCalls)} />
+                <Stat label={t('runs.roles')} value={String(detail.agentCalls)} />
               </div>
 
               {detail.summary.length > 0 && (
-                <Section title="Zusammenfassung">
+                <Section title={t('runs.summary')}>
                   {detail.summary.map((p, i) => (
                     <div
                       key={i}
@@ -260,7 +261,7 @@ export default function RunsView() {
               )}
 
               {detail.agents.length > 0 && (
-                <Section title="Beteiligte Rollen">
+                <Section title={t('runs.participants')}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {detail.agents.map((a) => (
                       <span key={a.name} className="tag tag-neutral" style={{ fontSize: 10 }}>
@@ -272,7 +273,7 @@ export default function RunsView() {
               )}
 
               {detail.artifacts.length > 0 && (
-                <Section title="Artefakte">
+                <Section title={t('runs.artifacts')}>
                   {detail.artifacts.slice(0, 12).map((a) => (
                     <div
                       key={a}

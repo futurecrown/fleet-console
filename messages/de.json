@@ -63,5 +63,46 @@
   },
   "waitState": {
     "waitingFor": "Antwort liegt vor — die Session wartet seit {time} auf deine Rückmeldung."
+  },
+  "runs": {
+    "title": "Verläufe",
+    "reading": "lese Transcripts…",
+    "count": "Läufen aus ~/.claude/projects",
+    "search": "Suchen…",
+    "allProjects": "alle Projekte",
+    "withRoles": "nur mit Rollen",
+    "dateHeader": "Datum",
+    "runHeader": "Lauf",
+    "durationHeader": "Dauer",
+    "tokensHeader": "Tokens",
+    "securityHeader": "Security",
+    "statusHeader": "Status",
+    "report": "Bericht",
+    "selectRun": "Lauf auswählen…",
+    "noMatch": "Kein Lauf passt zu dieser Auswahl.",
+    "noTranscripts": "Keine Transcripts gefunden.",
+    "tools": "Werkzeuge",
+    "roles": "Rollen",
+    "summary": "Zusammenfassung",
+    "participants": "Beteiligte Rollen",
+    "artifacts": "Artefakte"
+  },
+  "hooks": {
+    "title": "Hooks & Automation",
+    "subtitle": "Trigger, Nachtläufe und Zustellung",
+    "gateActive": "scharf",
+    "notInstalled": "nicht installiert",
+    "gateDescription": "Stop-Hook: startet nach jeder Session mit uncommitteten Änderungen an sicherheitsrelevanten Dateien.",
+    "lastRuns": "Letzte Auslösungen",
+    "notYetTriggered": "Noch nicht ausgelöst.",
+    "connected": "verbunden",
+    "offline": "offline",
+    "claudeOnServer": "Claude auf dem Server",
+    "otherCronLines": "Fremde Cron-Zeilen",
+    "unchanged": "(bleiben unberührt)",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "cronFailed": "Crontab konnte nicht geschrieben werden",
+    "saved": "settings.json geschrieben (Sicherung daneben abgelegt).",
+    "cronUpdated": "Crontab auf vps02 aktualisiert."
   }
 }
