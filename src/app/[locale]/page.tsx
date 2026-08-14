@@ -1,6 +1,8 @@
 'use client'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import AgentGraph from '@/components/AgentGraph'
 import AnswerView from '@/components/AnswerView'
 import HooksView from '@/components/HooksView'
@@ -26,7 +28,10 @@ const ROLE_ICONS: Record<string, string> = {
   'ux-ui-expert': 'ph-layout',
 }
 
+import { useLocale } from 'next-intl'
 export default function Page() {
+  const locale = useLocale()
+  const t = useTranslations()
   const [tab, setTab] = useState<Tab>('konsole')
 
   const [projects, setProjects] = useState<ProjectEntry[]>([])
@@ -58,7 +63,11 @@ export default function Page() {
   const [now, setNow] = useState(Date.now())
 
   // Rollenlauf: eigene Sessions je Rolle, unabhängig vom Orchestrator
-  const [pipelineMeta, setPipelineMeta] = useState<{ standardAuftrag: string; standardModell: string; timeoutSec: number } | null>(null)
+  const [pipelineMeta, setPipelineMeta] = useState<{
+    standardAuftrag: string
+    standardModell: string
+    timeoutSec: number
+  } | null>(null)
   const [pipelineAuftrag, setPipelineAuftrag] = useState('')
   /** `auto` = kein --model, jede Rolle nimmt das aus ihrer Rollendatei. */
   const [pipelineModell, setPipelineModell] = useState('auto')
@@ -81,7 +90,7 @@ export default function Page() {
         if (d.pipeline) setPipelineMeta(d.pipeline)
 
         const laufend: SessionState[] = (d.sessions ?? []).filter(
-          (s: SessionState) => s.status === 'läuft' || s.status === 'startet',
+          (s: SessionState) => s.status === 'läuft' || s.status === 'startet'
         )
         const wieder = laufend[0] ?? null
         if (wieder) {
@@ -89,13 +98,21 @@ export default function Page() {
           setNodes(wieder.nodes)
           setLog(wieder.log)
           setAntworten(wieder.antworten ?? [])
-          setTokens({ in: wieder.tokensIn, out: wieder.tokensOut, cached: wieder.tokensCached, cacheWrite: wieder.tokensCacheWrite ?? 0, anfragen: wieder.anfragen ?? 0 })
+          setTokens({
+            in: wieder.tokensIn,
+            out: wieder.tokensOut,
+            cached: wieder.tokensCached,
+            cacheWrite: wieder.tokensCacheWrite ?? 0,
+            anfragen: wieder.anfragen ?? 0,
+          })
           setModel(wieder.model)
           setPicked(wieder.roles)
           setSkip(wieder.skipPermissions)
           setMitRollen(wieder.roles)
           setProject(wieder.project)
-          const eintrag = (d.projects ?? []).find((p: ProjectEntry) => p.paths.includes(wieder.project))
+          const eintrag = (d.projects ?? []).find((p: ProjectEntry) =>
+            p.paths.includes(wieder.project)
+          )
           if (eintrag) setProjectId(eintrag.id)
           return
         }
@@ -126,10 +143,13 @@ export default function Page() {
       if (roh) {
         const gespeichert = JSON.parse(roh)
         const klemm = (wert: unknown, standard: number) =>
-          typeof wert === 'number' && Number.isFinite(wert) ? Math.max(0, Math.min(720, wert)) : standard
+          typeof wert === 'number' && Number.isFinite(wert)
+            ? Math.max(0, Math.min(720, wert))
+            : standard
         setLinks(klemm(gespeichert.links, 270))
         setRechts(klemm(gespeichert.rechts, 348))
-        if (gespeichert.ansicht === 'graph' || gespeichert.ansicht === 'antwort') setAnsicht(gespeichert.ansicht)
+        if (gespeichert.ansicht === 'graph' || gespeichert.ansicht === 'antwort')
+          setAnsicht(gespeichert.ansicht)
       }
     } catch {
       /* unlesbarer Eintrag — bei den Standardwerten bleiben */
@@ -168,7 +188,13 @@ export default function Page() {
       setNodes(s.nodes)
       setLog(s.log)
       setAntworten(s.antworten ?? [])
-      setTokens({ in: s.tokensIn, out: s.tokensOut, cached: s.tokensCached, cacheWrite: s.tokensCacheWrite ?? 0, anfragen: s.anfragen ?? 0 })
+      setTokens({
+        in: s.tokensIn,
+        out: s.tokensOut,
+        cached: s.tokensCached,
+        cacheWrite: s.tokensCacheWrite ?? 0,
+        anfragen: s.anfragen ?? 0,
+      })
     })
     es.addEventListener('line', (e) => {
       const line: FeedLine = JSON.parse((e as MessageEvent).data)
@@ -197,7 +223,7 @@ export default function Page() {
   const sessionRollen = session?.roles.join(',') ?? ''
   useEffect(() => {
     setLaufRollen(sessionRollen ? sessionRollen.split(',') : [])
-  }, [sessionId])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sessionId]) //
 
   const cliPreview = `claude -p --output-format stream-json --input-format stream-json --verbose --model ${model}${
     skip ? ' --dangerously-skip-permissions' : ''
@@ -220,7 +246,13 @@ export default function Page() {
     setSessions((prev) => [data.session, ...prev])
     setNodes(data.session.nodes)
     setLog(data.session.log)
-    setTokens({ in: data.session.tokensIn, out: data.session.tokensOut, cached: data.session.tokensCached, cacheWrite: data.session.tokensCacheWrite ?? 0, anfragen: data.session.anfragen ?? 0 })
+    setTokens({
+      in: data.session.tokensIn,
+      out: data.session.tokensOut,
+      cached: data.session.tokensCached,
+      cacheWrite: data.session.tokensCacheWrite ?? 0,
+      anfragen: data.session.anfragen ?? 0,
+    })
     setTab('konsole')
   }, [project, model, picked, prompt, skip])
 
@@ -332,23 +364,30 @@ export default function Page() {
   const arbeitet = Boolean(prozessLebt && !wartet)
   const running = prozessLebt
   const wartetSeit =
-    wartet && letztesEreignis
-      ? fmtDuration(now - new Date(letztesEreignis.t).getTime())
-      : null
+    wartet && letztesEreignis ? fmtDuration(now - new Date(letztesEreignis.t).getTime()) : null
   // Runde ohne jede Delegation: die Rollen waren gewählt, aber keine wurde beauftragt
   const ohneRolle = Boolean(
-    session?.roles.length && nodes.every((n) => n.id === 'orchestrator' || n.calls === 0),
+    session?.roles.length && nodes.every((n) => n.id === 'orchestrator' || n.calls === 0)
   )
   const abweichung = Boolean(
-    session && prozessLebt && (session.model !== model || session.skipPermissions !== skip),
+    session && prozessLebt && (session.model !== model || session.skipPermissions !== skip)
   )
   const pipelineAktiv = Boolean(session?.pipelineAktiv)
   const unterbrochen = session?.status === 'unterbrochen'
-  const elapsed = session ? fmtDuration((session.endedAt ? new Date(session.endedAt).getTime() : now) - new Date(session.startedAt).getTime()) : '—'
+  const elapsed = session
+    ? fmtDuration(
+        (session.endedAt ? new Date(session.endedAt).getTime() : now) -
+          new Date(session.startedAt).getTime()
+      )
+    : '—'
   const detail = nodes.find((n) => n.id === selectedNode) ?? null
 
   const gefiltert = log.filter((l) =>
-    feedFilter === 'alles' ? true : feedFilter === 'werkzeuge' ? l.kind === 'tool' : l.kind === 'agent',
+    feedFilter === 'alles'
+      ? true
+      : feedFilter === 'werkzeuge'
+        ? l.kind === 'tool'
+        : l.kind === 'agent'
   )
 
   // Sessions, die vor der Antwort-Sammlung gestartet wurden, haben nur den Feed.
@@ -389,8 +428,20 @@ export default function Page() {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-        <i className={`ph ${ROLE_ICONS[detail.id] ?? 'ph-tree-structure'}`} style={{ fontSize: 18, color: 'var(--color-accent)' }} />
-        <div style={{ fontSize: 14, fontWeight: 500, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <i
+          className={`ph ${ROLE_ICONS[detail.id] ?? 'ph-tree-structure'}`}
+          style={{ fontSize: 18, color: 'var(--color-accent)' }}
+        />
+        <div
+          style={{
+            fontSize: 14,
+            fontWeight: 500,
+            flex: 1,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
           {detail.id}
         </div>
         <button
@@ -403,7 +454,15 @@ export default function Page() {
         </button>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, fontSize: 11.5, color: 'var(--color-neutral-400)' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 5,
+          fontSize: 11.5,
+          color: 'var(--color-neutral-400)',
+        }}
+      >
         <div className="split">
           <span>Status</span>
           <span style={{ color: 'var(--color-text)' }}>{detail.status}</span>
@@ -423,7 +482,8 @@ export default function Page() {
         <div className="split">
           <span>Verbrauch</span>
           <span style={{ color: 'var(--color-text)', fontVariantNumeric: 'tabular-nums' }}>
-            {fmtTokens(detail.tokensOut ?? 0)} aus · {fmtTokens(detail.tokensIn ?? 0)} ein · {detail.anfragen ?? 0} Anfr.
+            {fmtTokens(detail.tokensOut ?? 0)} aus · {fmtTokens(detail.tokensIn ?? 0)} ein ·{' '}
+            {detail.anfragen ?? 0} Anfr.
           </span>
         </div>
         <div className="split">
@@ -431,14 +491,22 @@ export default function Page() {
           <span style={{ color: 'var(--color-text)' }}>
             {detail.startedAt
               ? fmtDuration(
-                  (detail.endedAt ? new Date(detail.endedAt).getTime() : now) - new Date(detail.startedAt).getTime(),
+                  (detail.endedAt ? new Date(detail.endedAt).getTime() : now) -
+                    new Date(detail.startedAt).getTime()
                 )
               : '—'}
           </span>
         </div>
         <div className="split">
           <span>Phase</span>
-          <span style={{ color: 'var(--color-text)', maxWidth: 170, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <span
+            style={{
+              color: 'var(--color-text)',
+              maxWidth: 170,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {detail.phase || '—'}
           </span>
         </div>
@@ -446,8 +514,17 @@ export default function Page() {
 
       {detail.auftrag && (
         <div>
-          <div className="kicker" style={{ marginBottom: 4 }}>Auftrag</div>
-          <div style={{ fontSize: 11, color: 'var(--color-neutral-300)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+          <div className="kicker" style={{ marginBottom: 4 }}>
+            Auftrag
+          </div>
+          <div
+            style={{
+              fontSize: 11,
+              color: 'var(--color-neutral-300)',
+              lineHeight: 1.5,
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {detail.auftrag.slice(0, 600)}
           </div>
         </div>
@@ -463,7 +540,12 @@ export default function Page() {
             {detail.bericht && (
               <span
                 className="mono"
-                style={{ marginLeft: 'auto', color: 'var(--color-neutral-600)', fontSize: 9, textTransform: 'none' }}
+                style={{
+                  marginLeft: 'auto',
+                  color: 'var(--color-neutral-600)',
+                  fontSize: 9,
+                  textTransform: 'none',
+                }}
                 title={detail.bericht}
               >
                 abgelegt
@@ -496,43 +578,59 @@ export default function Page() {
       className="shell"
       style={{
         gridTemplateColumns:
-          tab === 'konsole'
-            ? `${links}px minmax(0, 1fr) ${rechts}px`
-            : `0px minmax(0, 1fr) 0px`,
+          tab === 'konsole' ? `${links}px minmax(0, 1fr) ${rechts}px` : `0px minmax(0, 1fr) 0px`,
         position: 'relative',
       }}
     >
       {tab === 'konsole' && (
-      <div
-        className="resizer"
-        style={{ left: links - 3 }}
-        onPointerDown={ziehen('links')}
-        onDoubleClick={() => setLinks(links > 0 ? 0 : 270)}
-        title="Ziehen zum Ändern, Doppelklick klappt ein"
-      />
+        <div
+          className="resizer"
+          style={{ left: links - 3 }}
+          onPointerDown={ziehen('links')}
+          onDoubleClick={() => setLinks(links > 0 ? 0 : 270)}
+          title="Ziehen zum Ändern, Doppelklick klappt ein"
+        />
       )}
       {tab === 'konsole' && (
-      <div
-        className="resizer"
-        style={{ right: rechts - 3 }}
-        onPointerDown={ziehen('rechts')}
-        onDoubleClick={() => setRechts(rechts > 0 ? 0 : 348)}
-        title="Ziehen zum Ändern, Doppelklick klappt ein"
-      />
+        <div
+          className="resizer"
+          style={{ right: rechts - 3 }}
+          onPointerDown={ziehen('rechts')}
+          onDoubleClick={() => setRechts(rechts > 0 ? 0 : 348)}
+          title="Ziehen zum Ändern, Doppelklick klappt ein"
+        />
       )}
       <header className="topbar">
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div className="brandmark" />
-          <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 14, letterSpacing: '.14em' }}>
+          <LanguageSwitcher />
+          <div
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 500,
+              fontSize: 14,
+              letterSpacing: '.14em',
+            }}
+          >
             FLEET
           </div>
-          <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>Lokale Agenten-Konsole</div>
+          <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
+            Lokale Agenten-Konsole
+          </div>
         </div>
         <nav style={{ display: 'flex', gap: 6 }}>
-          <button className="navbtn" data-active={tab === 'konsole'} onClick={() => setTab('konsole')}>
+          <button
+            className="navbtn"
+            data-active={tab === 'konsole'}
+            onClick={() => setTab('konsole')}
+          >
             Konsole
           </button>
-          <button className="navbtn" data-active={tab === 'verlaeufe'} onClick={() => setTab('verlaeufe')}>
+          <button
+            className="navbtn"
+            data-active={tab === 'verlaeufe'}
+            onClick={() => setTab('verlaeufe')}
+          >
             Verläufe
           </button>
           <button className="navbtn" data-active={tab === 'hooks'} onClick={() => setTab('hooks')}>
@@ -546,7 +644,11 @@ export default function Page() {
                 width: 6,
                 height: 6,
                 borderRadius: '50%',
-                background: arbeitet ? 'var(--color-accent)' : wartet ? '#c8a06a' : 'var(--color-neutral-700)',
+                background: arbeitet
+                  ? 'var(--color-accent)'
+                  : wartet
+                    ? '#c8a06a'
+                    : 'var(--color-neutral-700)',
                 boxShadow: arbeitet ? '0 0 8px rgba(145,132,217,.8)' : 'none',
               }}
             />
@@ -559,9 +661,21 @@ export default function Page() {
                   setSession(s)
                   setNodes(s.nodes)
                   setLog(s.log)
-                  setTokens({ in: s.tokensIn, out: s.tokensOut, cached: s.tokensCached, cacheWrite: s.tokensCacheWrite ?? 0, anfragen: s.anfragen ?? 0 })
+                  setTokens({
+                    in: s.tokensIn,
+                    out: s.tokensOut,
+                    cached: s.tokensCached,
+                    cacheWrite: s.tokensCacheWrite ?? 0,
+                    anfragen: s.anfragen ?? 0,
+                  })
                 }}
-                style={{ background: 'transparent', border: 'none', color: 'inherit', font: 'inherit', cursor: 'pointer' }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'inherit',
+                  font: 'inherit',
+                  cursor: 'pointer',
+                }}
               >
                 {sessions.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -570,7 +684,11 @@ export default function Page() {
                 ))}
               </select>
             ) : session ? (
-              wartet ? `wartet auf Eingabe · seit ${wartetSeit}` : `Session ${session.status}`
+              wartet ? (
+                `wartet auf Eingabe · seit ${wartetSeit}`
+              ) : (
+                `Session ${session.status}`
+              )
             ) : (
               'keine Session'
             )}
@@ -604,313 +722,402 @@ export default function Page() {
       )}
 
       {tab === 'konsole' && (
-      <aside className="sidebar" style={{ display: links === 0 ? 'none' : undefined }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div className="kicker">{prozessLebt ? 'Laufende Session' : 'Neue Session'}</div>
+        <aside className="sidebar" style={{ display: links === 0 ? 'none' : undefined }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="kicker">{prozessLebt ? 'Laufende Session' : 'Neue Session'}</div>
 
-          {/* Der Projektordner steht im Prozessaufruf und lässt sich nicht
+            {/* Der Projektordner steht im Prozessaufruf und lässt sich nicht
               mehr ändern. Eine bedienbare Auswahl würde das Gegenteil
               behaupten — also steht hier nur noch, was gilt. */}
-          {prozessLebt ? (
-            <div className="field">
-              <label>Projekt · fest</label>
-              <div
-                className="input"
-                style={{ display: 'flex', alignItems: 'center', gap: 7, color: 'var(--color-neutral-400)', cursor: 'default' }}
-              >
-                <i className="ph ph-lock-simple" style={{ fontSize: 13, flex: 'none' }} />
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {projects.find((p) => p.paths.includes(session?.project ?? ''))?.label ??
-                    (session?.project ?? '').split('/').slice(-1)[0]}
-                </span>
-              </div>
-              <div className="mono" style={{ fontSize: 10, color: 'var(--color-neutral-600)', marginTop: 4, wordBreak: 'break-all' }}>
-                {(session?.project ?? '').replace(/^\/Users\/[^/]+/, '~')}
-              </div>
-            </div>
-          ) : (
-          <div className="field">
-            <label>Projekt</label>
-            <select
-              className="input"
-              value={projectId}
-              onChange={(e) => {
-                const entry = projects.find((p) => p.id === e.target.value)
-                setProjectId(e.target.value)
-                if (entry) setProject(entry.path)
-              }}
-            >
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
-                  {p.repo ? '' : p.git ? ' — ohne Remote' : ' — lokal'}
-                </option>
-              ))}
-            </select>
-
-            {(() => {
-              const entry = projects.find((p) => p.id === projectId)
-              if (!entry) return null
-              if (entry.paths.length > 1) {
-                return (
-                  <>
-                    <select className="input mono" style={{ fontSize: 11, marginTop: 6 }} value={project} onChange={(e) => setProject(e.target.value)}>
-                      {entry.paths.map((p) => (
-                        <option key={p} value={p}>
-                          {p.replace(/^\/Users\/[^/]+/, '~')}
-                        </option>
-                      ))}
-                    </select>
-                    <div style={{ fontSize: 10, color: '#c8a06a', marginTop: 4 }}>
-                      {entry.paths.length} Arbeitskopien dieses Repos
-                    </div>
-                  </>
-                )
-              }
-              return (
-                <div className="mono" style={{ fontSize: 10, color: 'var(--color-neutral-600)', marginTop: 4, wordBreak: 'break-all' }}>
-                  {entry.path.replace(/^\/Users\/[^/]+/, '~')}
-                </div>
-              )
-            })()}
-          </div>
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-            <div style={{ fontSize: 12, color: 'var(--color-neutral-400)' }}>
-              Modell
-              {prozessLebt && (
-                <span style={{ color: 'var(--color-neutral-600)' }}> · wirkt erst über Übernehmen</span>
-              )}
-            </div>
-            <div className="seg">
-              {models.map((m) => (
-                <label key={m.id} className="seg-opt">
-                  <input
-                    type="radio"
-                    name="modell"
-                    checked={model === m.id}
-                    onChange={() => setModel(m.id)}
-                    style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
-                  />
-                  {m.label}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <div style={{ fontSize: 12, color: 'var(--color-neutral-400)', marginBottom: 4 }}>Rollen · ~/.claude/agents</div>
-            {roles.length === 0 && (
-              <div style={{ fontSize: 11.5, color: 'var(--color-neutral-500)' }}>Keine Rollen gefunden.</div>
-            )}
-            {roles.map((r) => {
-              const on = picked.includes(r.name)
-              const imLauf = Boolean(session && prozessLebt && session.roles.includes(r.name))
-              // Eine Rolle, die der Session schon mitgegeben wurde, lässt sich
-              // nicht mehr herausnehmen. Der Klick war bisher ein stiller
-              // Blindgänger — jetzt sieht die Zeile aus, was sie ist: Zustand.
-              const festgelegt = prozessLebt && imLauf
-              return (
-                <button
-                  key={r.name}
-                  className="rolerow"
-                  disabled={festgelegt}
-                  style={festgelegt ? { cursor: 'default', opacity: 0.85 } : undefined}
-                  title={
-                    festgelegt
-                      ? `„${r.name}" ist dieser Session mitgegeben und lässt sich nicht mehr entfernen`
-                      : prozessLebt
-                        ? `„${r.name}" jetzt dazuschalten — die Session bekommt einen Auftrag dafür`
-                        : r.description
-                  }
-                  onClick={() => {
-                    if (festgelegt) return
-                    if (prozessLebt) {
-                      void rolleDazu(r.name)
-                      return
-                    }
-                    setPicked(on ? picked.filter((x) => x !== r.name) : [...picked, r.name])
+            {prozessLebt ? (
+              <div className="field">
+                <label>Projekt · fest</label>
+                <div
+                  className="input"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    color: 'var(--color-neutral-400)',
+                    cursor: 'default',
                   }}
                 >
-                  <span className="checkbox" data-on={on}>
-                    {on && <i className="ph ph-check" style={{ fontSize: 10, color: 'var(--color-accent)' }} />}
+                  <i className="ph ph-lock-simple" style={{ fontSize: 13, flex: 'none' }} />
+                  <span
+                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                  >
+                    {projects.find((p) => p.paths.includes(session?.project ?? ''))?.label ??
+                      (session?.project ?? '').split('/').slice(-1)[0]}
                   </span>
-                  <i
-                    className={`ph ${ROLE_ICONS[r.name] ?? 'ph-robot'}`}
-                    style={{ fontSize: 15, color: 'var(--color-neutral-400)' }}
-                  />
-                  <span style={{ color: on ? 'var(--color-text)' : 'var(--color-neutral-400)', flex: 1 }}>{r.name}</span>
-                  {festgelegt && (
-                    <i className="ph ph-lock-simple" style={{ fontSize: 11, color: 'var(--color-neutral-600)' }} />
-                  )}
-                  {prozessLebt && !imLauf && (
-                    <span style={{ fontSize: 9.5, color: 'var(--color-accent-300)' }}>+ dazu</span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
+                </div>
+                <div
+                  className="mono"
+                  style={{
+                    fontSize: 10,
+                    color: 'var(--color-neutral-600)',
+                    marginTop: 4,
+                    wordBreak: 'break-all',
+                  }}
+                >
+                  {(session?.project ?? '').replace(/^\/Users\/[^/]+/, '~')}
+                </div>
+              </div>
+            ) : (
+              <div className="field">
+                <label>Projekt</label>
+                <select
+                  className="input"
+                  value={projectId}
+                  onChange={(e) => {
+                    const entry = projects.find((p) => p.id === e.target.value)
+                    setProjectId(e.target.value)
+                    if (entry) setProject(entry.path)
+                  }}
+                >
+                  {projects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label}
+                      {p.repo ? '' : p.git ? ' — ohne Remote' : ' — lokal'}
+                    </option>
+                  ))}
+                </select>
 
-          {prozessLebt && (
-            <div style={{ fontSize: 10.5, color: 'var(--color-neutral-500)', lineHeight: 1.5 }}>
-              Rollen lassen sich dazuschalten, aber nicht mehr herausnehmen. Modell und
-              Auto-Permissions stehen im Prozessaufruf — sie wechseln über <em>Übernehmen</em>, die
-              Unterhaltung läuft dabei per <span className="mono">--resume</span> weiter. Der
-              Projektordner ist fest.
-            </div>
-          )}
+                {(() => {
+                  const entry = projects.find((p) => p.id === projectId)
+                  if (!entry) return null
+                  if (entry.paths.length > 1) {
+                    return (
+                      <>
+                        <select
+                          className="input mono"
+                          style={{ fontSize: 11, marginTop: 6 }}
+                          value={project}
+                          onChange={(e) => setProject(e.target.value)}
+                        >
+                          {entry.paths.map((p) => (
+                            <option key={p} value={p}>
+                              {p.replace(/^\/Users\/[^/]+/, '~')}
+                            </option>
+                          ))}
+                        </select>
+                        <div style={{ fontSize: 10, color: '#c8a06a', marginTop: 4 }}>
+                          {entry.paths.length} Arbeitskopien dieses Repos
+                        </div>
+                      </>
+                    )
+                  }
+                  return (
+                    <div
+                      className="mono"
+                      style={{
+                        fontSize: 10,
+                        color: 'var(--color-neutral-600)',
+                        marginTop: 4,
+                        wordBreak: 'break-all',
+                      }}
+                    >
+                      {entry.path.replace(/^\/Users\/[^/]+/, '~')}
+                    </div>
+                  )
+                })()}
+              </div>
+            )}
 
-          {abweichung && (
-            <button className="btn btn-primary btn-block" onClick={uebernehmen}>
-              <i className="ph ph-arrows-clockwise" />
-              Übernehmen · Session fortsetzen
-            </button>
-          )}
-
-          {/* Das Prompt-Feld gilt nur für den Start. Während eine Session
-              läuft, gehen Nachrichten unten rechts hinein — ein zweites
-              Eingabefeld, das nichts tut, ist eine Einladung zum Irrtum. */}
-          {prozessLebt ? (
-            <div
-              style={{
-                fontSize: 11,
-                color: 'var(--color-neutral-500)',
-                lineHeight: 1.5,
-                border: '1px dashed var(--color-divider)',
-                borderRadius: 'var(--radius-md)',
-                padding: '8px 10px',
-              }}
-            >
-              <i className="ph ph-arrow-bend-down-right" style={{ marginRight: 5 }} />
-              Weitere Anweisungen gehen unten rechts an die laufende Session.
-            </div>
-          ) : (
-            <div className="field">
-              <label>Prompt</label>
-              <textarea
-                className="input"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Was soll die Session tun?"
-              />
-            </div>
-          )}
-
-          <button
-            onClick={() => setSkip(!skip)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 10,
-              padding: '9px 10px',
-              border: '1px solid var(--color-divider)',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-              background: 'transparent',
-              color: 'inherit',
-              fontFamily: 'inherit',
-              textAlign: 'left',
-            }}
-          >
-            <div>
-              <div style={{ fontSize: 13 }}>Auto-Permissions</div>
-              <div className="mono" style={{ fontSize: 10, color: 'var(--color-neutral-500)' }}>
-                --dangerously-skip-permissions
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              <div style={{ fontSize: 12, color: 'var(--color-neutral-400)' }}>
+                Modell
+                {prozessLebt && (
+                  <span style={{ color: 'var(--color-neutral-600)' }}>
+                    {' '}
+                    · wirkt erst über Übernehmen
+                  </span>
+                )}
+              </div>
+              <div className="seg">
+                {models.map((m) => (
+                  <label key={m.id} className="seg-opt">
+                    <input
+                      type="radio"
+                      name="modell"
+                      checked={model === m.id}
+                      onChange={() => setModel(m.id)}
+                      style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
+                    />
+                    {m.label}
+                  </label>
+                ))}
               </div>
             </div>
-            <div
-              style={{
-                width: 34,
-                height: 19,
-                borderRadius: 99,
-                background: skip ? 'rgba(145,132,217,.35)' : 'rgba(233,233,237,.1)',
-                border: `1px solid ${skip ? 'var(--color-accent)' : 'var(--color-divider)'}`,
-                position: 'relative',
-                flex: 'none',
-              }}
-            >
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ fontSize: 12, color: 'var(--color-neutral-400)', marginBottom: 4 }}>
+                Rollen · ~/.claude/agents
+              </div>
+              {roles.length === 0 && (
+                <div style={{ fontSize: 11.5, color: 'var(--color-neutral-500)' }}>
+                  Keine Rollen gefunden.
+                </div>
+              )}
+              {roles.map((r) => {
+                const on = picked.includes(r.name)
+                const imLauf = Boolean(session && prozessLebt && session.roles.includes(r.name))
+                // Eine Rolle, die der Session schon mitgegeben wurde, lässt sich
+                // nicht mehr herausnehmen. Der Klick war bisher ein stiller
+                // Blindgänger — jetzt sieht die Zeile aus, was sie ist: Zustand.
+                const festgelegt = prozessLebt && imLauf
+                return (
+                  <button
+                    key={r.name}
+                    className="rolerow"
+                    disabled={festgelegt}
+                    style={festgelegt ? { cursor: 'default', opacity: 0.85 } : undefined}
+                    title={
+                      festgelegt
+                        ? `„${r.name}" ist dieser Session mitgegeben und lässt sich nicht mehr entfernen`
+                        : prozessLebt
+                          ? `„${r.name}" jetzt dazuschalten — die Session bekommt einen Auftrag dafür`
+                          : r.description
+                    }
+                    onClick={() => {
+                      if (festgelegt) return
+                      if (prozessLebt) {
+                        void rolleDazu(r.name)
+                        return
+                      }
+                      setPicked(on ? picked.filter((x) => x !== r.name) : [...picked, r.name])
+                    }}
+                  >
+                    <span className="checkbox" data-on={on}>
+                      {on && (
+                        <i
+                          className="ph ph-check"
+                          style={{ fontSize: 10, color: 'var(--color-accent)' }}
+                        />
+                      )}
+                    </span>
+                    <i
+                      className={`ph ${ROLE_ICONS[r.name] ?? 'ph-robot'}`}
+                      style={{ fontSize: 15, color: 'var(--color-neutral-400)' }}
+                    />
+                    <span
+                      style={{
+                        color: on ? 'var(--color-text)' : 'var(--color-neutral-400)',
+                        flex: 1,
+                      }}
+                    >
+                      {r.name}
+                    </span>
+                    {festgelegt && (
+                      <i
+                        className="ph ph-lock-simple"
+                        style={{ fontSize: 11, color: 'var(--color-neutral-600)' }}
+                      />
+                    )}
+                    {prozessLebt && !imLauf && (
+                      <span style={{ fontSize: 9.5, color: 'var(--color-accent-300)' }}>
+                        + dazu
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            {prozessLebt && (
+              <div style={{ fontSize: 10.5, color: 'var(--color-neutral-500)', lineHeight: 1.5 }}>
+                Rollen lassen sich dazuschalten, aber nicht mehr herausnehmen. Modell und
+                Auto-Permissions stehen im Prozessaufruf — sie wechseln über <em>Übernehmen</em>,
+                die Unterhaltung läuft dabei per <span className="mono">--resume</span> weiter. Der
+                Projektordner ist fest.
+              </div>
+            )}
+
+            {abweichung && (
+              <button className="btn btn-primary btn-block" onClick={uebernehmen}>
+                <i className="ph ph-arrows-clockwise" />
+                Übernehmen · Session fortsetzen
+              </button>
+            )}
+
+            {/* Das Prompt-Feld gilt nur für den Start. Während eine Session
+              läuft, gehen Nachrichten unten rechts hinein — ein zweites
+              Eingabefeld, das nichts tut, ist eine Einladung zum Irrtum. */}
+            {prozessLebt ? (
               <div
                 style={{
-                  position: 'absolute',
-                  top: 2,
-                  left: skip ? 16 : 2,
-                  width: 13,
-                  height: 13,
-                  borderRadius: '50%',
-                  background: skip ? 'var(--color-accent)' : 'var(--color-neutral-600)',
-                  transition: 'left .15s ease',
+                  fontSize: 11,
+                  color: 'var(--color-neutral-500)',
+                  lineHeight: 1.5,
+                  border: '1px dashed var(--color-divider)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '8px 10px',
                 }}
-              />
-            </div>
-          </button>
+              >
+                <i className="ph ph-arrow-bend-down-right" style={{ marginRight: 5 }} />
+                Weitere Anweisungen gehen unten rechts an die laufende Session.
+              </div>
+            ) : (
+              <div className="field">
+                <label>Prompt</label>
+                <textarea
+                  className="input"
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="Was soll die Session tun?"
+                />
+              </div>
+            )}
 
-          {/* Läuft eine Session, zeigt der Kasten ihren echten Aufruf — nicht
+            <button
+              onClick={() => setSkip(!skip)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 10,
+                padding: '9px 10px',
+                border: '1px solid var(--color-divider)',
+                borderRadius: 'var(--radius-md)',
+                cursor: 'pointer',
+                background: 'transparent',
+                color: 'inherit',
+                fontFamily: 'inherit',
+                textAlign: 'left',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 13 }}>Auto-Permissions</div>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--color-neutral-500)' }}>
+                  --dangerously-skip-permissions
+                </div>
+              </div>
+              <div
+                style={{
+                  width: 34,
+                  height: 19,
+                  borderRadius: 99,
+                  background: skip ? 'rgba(145,132,217,.35)' : 'rgba(233,233,237,.1)',
+                  border: `1px solid ${skip ? 'var(--color-accent)' : 'var(--color-divider)'}`,
+                  position: 'relative',
+                  flex: 'none',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 2,
+                    left: skip ? 16 : 2,
+                    width: 13,
+                    height: 13,
+                    borderRadius: '50%',
+                    background: skip ? 'var(--color-accent)' : 'var(--color-neutral-600)',
+                    transition: 'left .15s ease',
+                  }}
+                />
+              </div>
+            </button>
+
+            {/* Läuft eine Session, zeigt der Kasten ihren echten Aufruf — nicht
               das, was das Formular gerade eingestellt hat. */}
-          <div className="codebox">
-            <span style={{ color: 'var(--color-neutral-500)' }}>$ </span>
-            {prozessLebt && session ? session.cli : cliPreview}
-            {!prozessLebt && <span className="caret" />}
-          </div>
-          {prozessLebt && abweichung && (
-            <div style={{ fontSize: 10, color: '#c8a06a', marginTop: -4 }}>
-              Das ist der laufende Aufruf. Die Auswahl oben weicht davon ab.
+            <div className="codebox">
+              <span style={{ color: 'var(--color-neutral-500)' }}>$ </span>
+              {prozessLebt && session ? session.cli : cliPreview}
+              {!prozessLebt && <span className="caret" />}
             </div>
-          )}
+            {prozessLebt && abweichung && (
+              <div style={{ fontSize: 10, color: '#c8a06a', marginTop: -4 }}>
+                Das ist der laufende Aufruf. Die Auswahl oben weicht davon ab.
+              </div>
+            )}
 
-          {error && <div className="banner">{error}</div>}
+            {error && <div className="banner">{error}</div>}
 
-          {/* Solange eine Session lebt, gibt es hier nichts zu starten —
+            {/* Solange eine Session lebt, gibt es hier nichts zu starten —
               der Knopf war nur ausgegraut und blieb trotzdem stehen. */}
-          {!prozessLebt && (
-            <button className="btn btn-primary btn-block" onClick={start} disabled={!prompt.trim() || !project}>
-              <i className="ph ph-play" />
-              Session starten
-            </button>
-          )}
+            {!prozessLebt && (
+              <button
+                className="btn btn-primary btn-block"
+                onClick={start}
+                disabled={!prompt.trim() || !project}
+              >
+                <i className="ph ph-play" />
+                Session starten
+              </button>
+            )}
 
-          {prozessLebt && (
-            <button className="btn btn-secondary btn-block" onClick={stop}>
-              <i className="ph ph-stop" />
-              {wartet ? 'Session beenden' : 'Abbrechen'}
-            </button>
-          )}
-        </div>
+            {prozessLebt && (
+              <button className="btn btn-secondary btn-block" onClick={stop}>
+                <i className="ph ph-stop" />
+                {wartet ? 'Session beenden' : 'Abbrechen'}
+              </button>
+            )}
+          </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div className="kicker">Automation</div>
-          <button className="card" style={{ gap: 4, cursor: 'pointer', textAlign: 'left' }} onClick={() => setTab('hooks')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-              <i className="ph ph-moon-stars" style={{ color: 'var(--color-accent)', fontSize: 15 }} />
-              Nachtlauf · vps02
-              <span className="tag tag-outline" style={{ marginLeft: 'auto', fontSize: 10 }}>
-                verwalten
-              </span>
-            </div>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
-              cron · claude -p · Report
-            </div>
-          </button>
-          <button className="card" style={{ gap: 4, cursor: 'pointer', textAlign: 'left' }} onClick={() => setTab('hooks')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-              <i className="ph ph-lightning" style={{ color: 'var(--color-accent)', fontSize: 15 }} />
-              Hook · security-reviewer
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
-              Startet automatisch nach Sessions mit Code-Änderungen
-            </div>
-          </button>
-        </div>
-      </aside>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="kicker">Automation</div>
+            <button
+              className="card"
+              style={{ gap: 4, cursor: 'pointer', textAlign: 'left' }}
+              onClick={() => setTab('hooks')}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                <i
+                  className="ph ph-moon-stars"
+                  style={{ color: 'var(--color-accent)', fontSize: 15 }}
+                />
+                Nachtlauf · vps02
+                <span className="tag tag-outline" style={{ marginLeft: 'auto', fontSize: 10 }}>
+                  verwalten
+                </span>
+              </div>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
+                cron · claude -p · Report
+              </div>
+            </button>
+            <button
+              className="card"
+              style={{ gap: 4, cursor: 'pointer', textAlign: 'left' }}
+              onClick={() => setTab('hooks')}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                <i
+                  className="ph ph-lightning"
+                  style={{ color: 'var(--color-accent)', fontSize: 15 }}
+                />
+                Hook · security-reviewer
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
+                Startet automatisch nach Sessions mit Code-Änderungen
+              </div>
+            </button>
+          </div>
+        </aside>
       )}
 
       {tab === 'konsole' && (
         <>
-          <main style={{ display: 'flex', flexDirection: 'column', padding: '14px 18px 12px', minWidth: 0, minHeight: 0, overflow: 'hidden' }}>
+          <main
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '14px 18px 12px',
+              minWidth: 0,
+              minHeight: 0,
+              overflow: 'hidden',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-heading)',
+                    fontWeight: 500,
+                    fontSize: 16,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {session ? session.prompt.slice(0, 70) : 'Keine laufende Session'}
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
@@ -920,7 +1127,16 @@ export default function Page() {
                     : 'Links Projekt, Modell und Rollen wählen'}
                 </div>
               </div>
-              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16, fontSize: 12, color: 'var(--color-neutral-400)' }}>
+              <div
+                style={{
+                  marginLeft: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  fontSize: 12,
+                  color: 'var(--color-neutral-400)',
+                }}
+              >
                 <div className="seg">
                   <label className="seg-opt" style={{ padding: '4px 10px', fontSize: 12 }}>
                     <input
@@ -973,50 +1189,69 @@ export default function Page() {
             {!session ? (
               <div className="leer">
                 <div style={{ maxWidth: 380 }}>
-                  <i className="ph ph-play-circle" style={{ fontSize: 30, color: 'var(--color-accent)' }} />
-                  <div style={{ fontFamily: 'var(--font-heading)', fontSize: 15, margin: '10px 0 6px', color: 'var(--color-text)' }}>
+                  <i
+                    className="ph ph-play-circle"
+                    style={{ fontSize: 30, color: 'var(--color-accent)' }}
+                  />
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: 15,
+                      margin: '10px 0 6px',
+                      color: 'var(--color-text)',
+                    }}
+                  >
                     Keine laufende Session
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.6 }}>
                     Links Projekt, Modell und Rollen wählen, Auftrag eintippen, starten. Der Verlauf
-                    früherer Läufe steht unter <strong style={{ color: 'var(--color-neutral-300)' }}>Verläufe</strong>.
+                    früherer Läufe steht unter{' '}
+                    <strong style={{ color: 'var(--color-neutral-300)' }}>Verläufe</strong>.
                   </div>
                 </div>
               </div>
             ) : ansicht === 'antwort' ? (
               <AnswerView antworten={antwortenAnzeige} />
             ) : (
-            <AgentGraph
-              nodes={
-                nodes.length
-                  ? nodes
-                  : [
-                      {
-                        id: 'orchestrator',
-                        status: 'idle',
-                        phase: 'bereit',
-                        tokensOut: 0,
-                        tokensIn: 0,
-                        anfragen: 0,
-                        calls: 0,
-                        order: 0,
-                        auftrag: '',
-                        ergebnis: '',
-                        volltext: '',
-                        bericht: null,
-                        quelle: null,
-                        startedAt: null,
-                        endedAt: null,
-                      },
-                    ]
-              }
-              selected={selectedNode}
-              onSelect={(id) => setSelectedNode(id === selectedNode ? null : id)}
-              detail={detailPanel}
-            />
+              <AgentGraph
+                nodes={
+                  nodes.length
+                    ? nodes
+                    : [
+                        {
+                          id: 'orchestrator',
+                          status: 'idle',
+                          phase: 'bereit',
+                          tokensOut: 0,
+                          tokensIn: 0,
+                          anfragen: 0,
+                          calls: 0,
+                          order: 0,
+                          auftrag: '',
+                          ergebnis: '',
+                          volltext: '',
+                          bericht: null,
+                          quelle: null,
+                          startedAt: null,
+                          endedAt: null,
+                        },
+                      ]
+                }
+                selected={selectedNode}
+                onSelect={(id) => setSelectedNode(id === selectedNode ? null : id)}
+                detail={detailPanel}
+              />
             )}
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: 8,
+                marginTop: 10,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
               {nodes
                 .filter((n) => n.id !== 'orchestrator' && n.order)
                 .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
@@ -1027,22 +1262,31 @@ export default function Page() {
                     className="pill"
                     style={{
                       cursor: 'pointer',
-                      borderColor: n.status === 'running' ? 'var(--color-accent)' : 'var(--color-divider)',
-                      color: n.status === 'idle' ? 'var(--color-neutral-600)' : 'var(--color-neutral-300)',
+                      borderColor:
+                        n.status === 'running' ? 'var(--color-accent)' : 'var(--color-divider)',
+                      color:
+                        n.status === 'idle'
+                          ? 'var(--color-neutral-600)'
+                          : 'var(--color-neutral-300)',
                     }}
                   >
                     <span style={{ color: 'var(--color-accent)' }}>{n.order}.</span>
                     {n.id}
                     {n.startedAt && n.endedAt && (
                       <span style={{ color: 'var(--color-neutral-600)' }}>
-                        {fmtDuration(new Date(n.endedAt).getTime() - new Date(n.startedAt).getTime())}
+                        {fmtDuration(
+                          new Date(n.endedAt).getTime() - new Date(n.startedAt).getTime()
+                        )}
                       </span>
                     )}
                   </button>
                 ))}
               {nodes.some((n) => n.id !== 'orchestrator' && n.order) && (
-                <span style={{ marginLeft: 'auto', fontSize: 10.5, color: 'var(--color-neutral-600)' }}>
-                  Reihenfolge der Beauftragung · Rollen arbeiten isoliert, alles läuft über den Orchestrator
+                <span
+                  style={{ marginLeft: 'auto', fontSize: 10.5, color: 'var(--color-neutral-600)' }}
+                >
+                  Reihenfolge der Beauftragung · Rollen arbeiten isoliert, alles läuft über den
+                  Orchestrator
                 </span>
               )}
             </div>
@@ -1050,9 +1294,19 @@ export default function Page() {
             {session && (
               <div className="card" style={{ marginTop: 10, gap: 8, padding: '10px 12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <i className="ph ph-flow-arrow" style={{ fontSize: 16, color: 'var(--color-accent)' }} />
+                  <i
+                    className="ph ph-flow-arrow"
+                    style={{ fontSize: 16, color: 'var(--color-accent)' }}
+                  />
                   <div style={{ fontSize: 13, fontWeight: 500 }}>Rollenlauf</div>
-                  <div style={{ fontSize: 10.5, color: 'var(--color-neutral-500)', flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 10.5,
+                      color: 'var(--color-neutral-500)',
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
                     {pipelineAktiv
                       ? `läuft · ${session.pipelineRollen?.join(', ') ?? ''}`
                       : 'jede Rolle als eigene Session — unabhängig vom Orchestrator'}
@@ -1063,7 +1317,9 @@ export default function Page() {
                     onClick={() => setPipelineOffen(!pipelineOffen)}
                     title="Auftrag und Modell einstellen"
                   >
-                    <i className={`ph ${pipelineOffen ? 'ph-caret-up' : 'ph-sliders-horizontal'}`} />
+                    <i
+                      className={`ph ${pipelineOffen ? 'ph-caret-up' : 'ph-sliders-horizontal'}`}
+                    />
                     {pipelineOffen ? 'zu' : 'einstellen'}
                   </button>
                   <button
@@ -1093,15 +1349,21 @@ export default function Page() {
                         disabled={pipelineAktiv}
                         title={r.description}
                         onClick={() =>
-                          setLaufRollen(an ? laufRollen.filter((x) => x !== r.name) : [...laufRollen, r.name])
+                          setLaufRollen(
+                            an ? laufRollen.filter((x) => x !== r.name) : [...laufRollen, r.name]
+                          )
                         }
                       >
                         {r.name}
                       </button>
                     )
                   })}
-                  <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--color-neutral-600)' }}>
-                    {pipelineMeta?.timeoutSec ? `Zeitgrenze ${pipelineMeta.timeoutSec} s je Rolle` : 'ohne Zeitgrenze'}
+                  <span
+                    style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--color-neutral-600)' }}
+                  >
+                    {pipelineMeta?.timeoutSec
+                      ? `Zeitgrenze ${pipelineMeta.timeoutSec} s je Rolle`
+                      : 'ohne Zeitgrenze'}
                   </span>
                 </div>
 
@@ -1114,8 +1376,12 @@ export default function Page() {
                       onChange={(e) => setPipelineAuftrag(e.target.value)}
                       placeholder={pipelineMeta?.standardAuftrag ?? 'Auftrag an jede Rolle …'}
                     />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>Modell</span>
+                    <div
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}
+                    >
+                      <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
+                        Modell
+                      </span>
                       <select
                         className="input"
                         style={{ width: 150, fontSize: 11.5, padding: '3px 6px' }}
@@ -1147,16 +1413,22 @@ export default function Page() {
                           Auftrag zurücksetzen
                         </button>
                       )}
-                      <span style={{ fontSize: 10.5, color: 'var(--color-neutral-600)', flex: 1, minWidth: 180 }}>
-                        Leerer Auftrag = Prüfung des uncommitteten Stands. Jeder andere Text geht jeder Rolle
-                        wörtlich zu.
+                      <span
+                        style={{
+                          fontSize: 10.5,
+                          color: 'var(--color-neutral-600)',
+                          flex: 1,
+                          minWidth: 180,
+                        }}
+                      >
+                        Leerer Auftrag = Prüfung des uncommitteten Stands. Jeder andere Text geht
+                        jeder Rolle wörtlich zu.
                       </span>
                     </div>
                   </div>
                 )}
               </div>
             )}
-
           </main>
 
           <section
@@ -1185,16 +1457,22 @@ export default function Page() {
                 }}
               >
                 <span style={{ flex: 1 }}>
-                  Session unterbrochen — der Serverprozess ist gegangen. Die Unterhaltung liegt noch bei
-                  Claude.
+                  Session unterbrochen — der Serverprozess ist gegangen. Die Unterhaltung liegt noch
+                  bei Claude.
                 </span>
-                <button className="btn btn-secondary" style={{ fontSize: 11, padding: '3px 9px' }} onClick={fortsetzen}>
+                <button
+                  className="btn btn-secondary"
+                  style={{ fontSize: 11, padding: '3px 9px' }}
+                  onClick={fortsetzen}
+                >
                   fortsetzen
                 </button>
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+            <div
+              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}
+            >
               <div
                 className="card"
                 style={{ gap: 1, padding: '9px 11px' }}
@@ -1202,17 +1480,21 @@ export default function Page() {
               >
                 <div className="kicker">Tokens</div>
                 <div style={{ fontSize: 15, fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
-                  {fmtTokens(tokens.out)} <span style={{ fontSize: 10, color: 'var(--color-neutral-500)' }}>aus</span>
+                  {fmtTokens(tokens.out)}{' '}
+                  <span style={{ fontSize: 10, color: 'var(--color-neutral-500)' }}>aus</span>
                 </div>
                 <div style={{ fontSize: 9.5, color: 'var(--color-neutral-600)', lineHeight: 1.5 }}>
-                  {fmtTokens(tokens.in)} ein · Cache {fmtTokens(tokens.cacheWrite)}↑ {fmtTokens(tokens.cached)}↓
+                  {fmtTokens(tokens.in)} ein · Cache {fmtTokens(tokens.cacheWrite)}↑{' '}
+                  {fmtTokens(tokens.cached)}↓
                   <br />
                   {tokens.anfragen} Anfragen
                 </div>
               </div>
               <div className="card" style={{ gap: 1, padding: '9px 11px' }}>
                 <div className="kicker">Dauer</div>
-                <div style={{ fontSize: 15, fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{elapsed}</div>
+                <div style={{ fontSize: 15, fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
+                  {elapsed}
+                </div>
               </div>
             </div>
 
@@ -1220,18 +1502,36 @@ export default function Page() {
               <div className="kicker">Live-Feed</div>
               {arbeitet && (
                 <span
-                  style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)', animation: 'nfPulse 1.6s infinite' }}
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: 'var(--color-accent)',
+                    animation: 'nfPulse 1.6s infinite',
+                  }}
                 />
               )}
-              {wartet && <span className="tag tag-outline" style={{ fontSize: 9.5 }}>wartet</span>}
-              <div className="mono" style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--color-neutral-600)' }}>
+              {wartet && (
+                <span className="tag tag-outline" style={{ fontSize: 9.5 }}>
+                  wartet
+                </span>
+              )}
+              <div
+                className="mono"
+                style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--color-neutral-600)' }}
+              >
                 stream-json
               </div>
             </div>
 
             <div className="toolbar" style={{ marginBottom: 6 }}>
               {(['alles', 'werkzeuge', 'rollen'] as const).map((f) => (
-                <button key={f} className="chip" data-on={feedFilter === f} onClick={() => setFeedFilter(f)}>
+                <button
+                  key={f}
+                  className="chip"
+                  data-on={feedFilter === f}
+                  onClick={() => setFeedFilter(f)}
+                >
                   {f}
                 </button>
               ))}
@@ -1241,7 +1541,11 @@ export default function Page() {
             </div>
 
             <div className="feed" ref={feedRef}>
-              {gefiltert.length === 0 && <div style={{ color: 'var(--color-neutral-600)' }}>— nichts in dieser Auswahl —</div>}
+              {gefiltert.length === 0 && (
+                <div style={{ color: 'var(--color-neutral-600)' }}>
+                  — nichts in dieser Auswahl —
+                </div>
+              )}
               {gefiltert.map((l, i) => {
                 const vorher = gefiltert[i - 1]
                 const neuerSprecher = !vorher || vorher.agent !== l.agent
@@ -1250,13 +1554,20 @@ export default function Page() {
                     {neuerSprecher && (
                       <div
                         className="feedagent"
-                        style={{ color: l.kind === 'error' ? '#e08c92' : l.agent === 'orchestrator' ? 'var(--color-accent)' : undefined }}
+                        style={{
+                          color:
+                            l.kind === 'error'
+                              ? '#e08c92'
+                              : l.agent === 'orchestrator'
+                                ? 'var(--color-accent)'
+                                : undefined,
+                        }}
                       >
                         {l.agent}
                       </div>
                     )}
                     <div className="feedrow">
-                      <span className="feedtime">{fmtTime(l.t).slice(0, 5)}</span>
+                      <span className="feedtime">{fmtTime(l.t, locale).slice(0, 5)}</span>
                       <span className="feedtext">{l.text}</span>
                     </div>
                   </div>
@@ -1280,8 +1591,8 @@ export default function Page() {
                 }}
               >
                 <span style={{ flex: 1 }}>
-                  Diese Runde lief ohne Rolle — kein Review erfolgt. Der Rollenlauf holt es nach, ohne den
-                  Orchestrator zu fragen.
+                  Diese Runde lief ohne Rolle — kein Review erfolgt. Der Rollenlauf holt es nach,
+                  ohne den Orchestrator zu fragen.
                 </span>
                 <button
                   className="btn btn-secondary"
@@ -1309,7 +1620,9 @@ export default function Page() {
               </div>
             )}
             <div className="toolbar" style={{ marginTop: 8 }}>
-              <span className="muted" style={{ fontSize: 10 }}>mitschicken:</span>
+              <span className="muted" style={{ fontSize: 10 }}>
+                mitschicken:
+              </span>
               {roles.map((r) => {
                 const an = mitRollen.includes(r.name)
                 return (
@@ -1318,7 +1631,11 @@ export default function Page() {
                     className="chip"
                     data-on={an}
                     title={`Nachricht weist den Orchestrator an, „${r.name}" zu beauftragen`}
-                    onClick={() => setMitRollen(an ? mitRollen.filter((x) => x !== r.name) : [...mitRollen, r.name])}
+                    onClick={() =>
+                      setMitRollen(
+                        an ? mitRollen.filter((x) => x !== r.name) : [...mitRollen, r.name]
+                      )
+                    }
                   >
                     {r.name.replace('-', ' ')}
                   </button>
@@ -1327,7 +1644,9 @@ export default function Page() {
               <button
                 className="chip"
                 data-on={mitRollen.length === roles.length && roles.length > 0}
-                onClick={() => setMitRollen(mitRollen.length === roles.length ? [] : roles.map((r) => r.name))}
+                onClick={() =>
+                  setMitRollen(mitRollen.length === roles.length ? [] : roles.map((r) => r.name))
+                }
               >
                 alle
               </button>
@@ -1348,7 +1667,12 @@ export default function Page() {
                 }}
                 style={{ flex: 1 }}
               />
-              <button className="btn btn-primary btn-icon" onClick={send} disabled={!running} title="Senden">
+              <button
+                className="btn btn-primary btn-icon"
+                onClick={send}
+                disabled={!running}
+                title="Senden"
+              >
                 <i className="ph ph-paper-plane-tilt" />
               </button>
             </div>

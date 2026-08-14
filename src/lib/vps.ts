@@ -29,8 +29,17 @@ export interface VpsStatus {
 async function ssh(command: string, timeout = 12000): Promise<string> {
   const { stdout } = await exec(
     'ssh',
-    ['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-o', 'StrictHostKeyChecking=accept-new', VPS_HOST, command],
-    { timeout, maxBuffer: 1024 * 1024 },
+    [
+      '-o',
+      'BatchMode=yes',
+      '-o',
+      'ConnectTimeout=8',
+      '-o',
+      'StrictHostKeyChecking=accept-new',
+      VPS_HOST,
+      command,
+    ],
+    { timeout, maxBuffer: 1024 * 1024 }
   )
   return stdout
 }
@@ -84,12 +93,15 @@ export async function getVpsStatus(): Promise<VpsStatus> {
 
   // Zusatzinfos dürfen fehlschlagen, ohne den Status zu kippen
   try {
-    base.claudeVersion = (await ssh('claude --version 2>/dev/null || echo "nicht installiert"')).trim()
+    base.claudeVersion = (
+      await ssh('claude --version 2>/dev/null || echo "nicht installiert"')
+    ).trim()
   } catch {
     /* egal */
   }
   try {
-    base.lastRun = (await ssh('tail -n 1 /opt/ivan/fleet/last-run.log 2>/dev/null || true')).trim() || null
+    base.lastRun =
+      (await ssh('tail -n 1 /opt/ivan/fleet/last-run.log 2>/dev/null || true')).trim() || null
   } catch {
     /* egal */
   }
@@ -97,7 +109,9 @@ export async function getVpsStatus(): Promise<VpsStatus> {
 }
 
 /** Ersetzt alle markierten Zeilen durch die übergebenen; fremde Zeilen bleiben. */
-export async function saveNightRuns(runs: { name: string; schedule: string; command: string }[]): Promise<void> {
+export async function saveNightRuns(
+  runs: { name: string; schedule: string; command: string }[]
+): Promise<void> {
   const raw = await ssh('crontab -l 2>/dev/null || true')
   const { other } = parseCrontab(raw)
 
@@ -114,7 +128,8 @@ export async function saveNightRuns(runs: { name: string; schedule: string; comm
     if (/[\r\n\u0000-\u001f\u007f]/.test(r.command)) {
       throw new Error('Befehl darf keine Zeilenumbrüche oder Steuerzeichen enthalten')
     }
-    if (r.command.includes(MARK)) throw new Error('Befehl darf den Verwaltungsmarker nicht enthalten')
+    if (r.command.includes(MARK))
+      throw new Error('Befehl darf den Verwaltungsmarker nicht enthalten')
     if (r.command.trim().length === 0) throw new Error('Befehl ist leer')
     if (r.command.length > 500) throw new Error('Befehl ist zu lang')
     // Der Zeitplan geht durch dieselbe Prüfung — `\r` ist in `\s` enthalten.
@@ -135,7 +150,7 @@ export async function saveNightRuns(runs: { name: string; schedule: string; comm
       'ssh',
       ['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', VPS_HOST, 'crontab -'],
       { timeout: 12000 },
-      (err) => (err ? reject(err) : resolve()),
+      (err) => (err ? reject(err) : resolve())
     )
     child.stdin?.end(body)
   })

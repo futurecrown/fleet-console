@@ -50,13 +50,22 @@ function Markdown({ text }: { text: string }) {
   const listeSchliessen = () => {
     if (!liste.length) return
     blocks.push(
-      <ul key={`ul-${blocks.length}`} style={{ margin: '6px 0 10px', paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <ul
+        key={`ul-${blocks.length}`}
+        style={{
+          margin: '6px 0 10px',
+          paddingLeft: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+        }}
+      >
         {liste.map((l, i) => (
           <li key={i} style={{ lineHeight: 1.6 }}>
             {inline(l, `li-${blocks.length}-${i}`)}
           </li>
         ))}
-      </ul>,
+      </ul>
     )
     liste = []
   }
@@ -83,7 +92,7 @@ function Markdown({ text }: { text: string }) {
             }}
           >
             {code.join('\n')}
-          </pre>,
+          </pre>
         )
         code = null
       }
@@ -109,7 +118,7 @@ function Markdown({ text }: { text: string }) {
           }}
         >
           {inline(ueberschrift[2], `h-${index}`)}
-        </div>,
+        </div>
       )
       return
     }
@@ -129,7 +138,7 @@ function Markdown({ text }: { text: string }) {
     blocks.push(
       <p key={`p-${index}`} style={{ margin: '0 0 10px', lineHeight: 1.65 }}>
         {inline(zeile, `p-${index}`)}
-      </p>,
+      </p>
     )
   })
   listeSchliessen()
@@ -160,7 +169,15 @@ export default function AnswerView({ antworten }: { antworten: { t: string; text
 
   if (!antworten.length) {
     return (
-      <div className="stage" style={{ display: 'grid', placeItems: 'center', color: 'var(--color-neutral-600)', fontSize: 13 }}>
+      <div
+        className="stage"
+        style={{
+          display: 'grid',
+          placeItems: 'center',
+          color: 'var(--color-neutral-600)',
+          fontSize: 13,
+        }}
+      >
         Noch keine Antwort.
       </div>
     )
@@ -170,7 +187,12 @@ export default function AnswerView({ antworten }: { antworten: { t: string; text
     <div
       className="stage"
       ref={box}
-      style={{ overflowY: 'auto', padding: '18px 22px', fontSize: 13.5, color: 'var(--color-neutral-200)' }}
+      style={{
+        overflowY: 'auto',
+        padding: '18px 22px',
+        fontSize: 13.5,
+        color: 'var(--color-neutral-200)',
+      }}
     >
       {antworten.map((a, i) => (
         <div
@@ -180,7 +202,16 @@ export default function AnswerView({ antworten }: { antworten: { t: string; text
         >
           <div
             className="kicker"
-            style={{ marginBottom: 8, display: 'flex', gap: 8, alignItems: 'center', position: 'sticky', top: -18, background: 'var(--color-bg)', paddingTop: 4 }}
+            style={{
+              marginBottom: 8,
+              display: 'flex',
+              gap: 8,
+              alignItems: 'center',
+              position: 'sticky',
+              top: -18,
+              background: 'var(--color-bg)',
+              paddingTop: 4,
+            }}
           >
             Antwort {i + 1} · {fmtTime(a.t)}
             <button

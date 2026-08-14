@@ -1,0 +1,67 @@
+{
+  "navigation": {
+    "console": "Console",
+    "history": "History",
+    "hooks": "Hooks & Settings",
+    "toggleLanguage": "Toggle Language"
+  },
+  "project": {
+    "title": "Project",
+    "directory": "Project Directory",
+    "none": "— none —",
+    "loadState": "Working state as context"
+  },
+  "roles": {
+    "title": "Roles",
+    "noRolesFound": "No roles found in ~/.claude/agents.",
+    "none": "— none —"
+  },
+  "model": {
+    "title": "Model",
+    "auto": "Auto (from role/system)",
+    "forAll": "for all:",
+    "allTo": "all to"
+  },
+  "session": {
+    "start": "Start Session",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "interrupted": "Session interrupted — the server process has exited. The conversation is still with Claude.",
+    "resume": "resume"
+  },
+  "stats": {
+    "tokens": "Tokens",
+    "out": "out",
+    "in": "in",
+    "cache": "Cache",
+    "requests": "requests",
+    "duration": "Duration"
+  },
+  "feed": {
+    "title": "Live Feed",
+    "waiting": "waiting",
+    "filterAll": "all",
+    "filterTools": "tools",
+    "filterRoles": "roles",
+    "noItems": "— nothing in this selection —",
+    "of": "of"
+  },
+  "messages": {
+    "placeholderWartet": "Reply and continue...",
+    "placeholderRunning": "Message to the session...",
+    "send": "Send",
+    "attach": "attach:",
+    "all": "all"
+  },
+  "roleRun": {
+    "noRoleAlert": "This round ran without a role — no review performed. The role run catches up without asking the orchestrator.",
+    "startRun": "Start Role Run",
+    "taskReset": "Reset Task",
+    "attachState": "Attach State",
+    "attachStateTitle": "The working state is collected once and given to all roles, instead of each gathering it themselves",
+    "emptyTaskNote": "Empty task = review of the uncommitted state. Any other text goes to each role verbatim."
+  },
+  "waitState": {
+    "waitingFor": "Response is ready — the session has been waiting for your reply since {time}."
+  }
+}

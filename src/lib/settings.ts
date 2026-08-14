@@ -2,7 +2,14 @@ import { execFile as execFileCb } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { promisify } from 'node:util'
-import { AGENTS_DIR, CLAUDE_DIR, FLEET_DIR, PROJECT_ROOTS, SETTINGS_FILE, shortProjectName } from './config'
+import {
+  AGENTS_DIR,
+  CLAUDE_DIR,
+  FLEET_DIR,
+  PROJECT_ROOTS,
+  SETTINGS_FILE,
+  shortProjectName,
+} from './config'
 
 export interface Role {
   name: string
@@ -57,7 +64,10 @@ export async function listRoles(): Promise<Role[]> {
         name: fm.name || path.basename(f, '.md'),
         description: fm.description ?? '',
         model: fm.model ?? null,
-        tools: (fm.tools ?? '').split(',').map((t) => t.trim()).filter(Boolean),
+        tools: (fm.tools ?? '')
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
         file,
       })
     } catch {
@@ -97,7 +107,9 @@ export function parseRemote(url: string): string | null {
 
 async function originOf(dir: string): Promise<string | null> {
   try {
-    const { stdout } = await execFile('git', ['-C', dir, 'remote', 'get-url', 'origin'], { timeout: 4000 })
+    const { stdout } = await execFile('git', ['-C', dir, 'remote', 'get-url', 'origin'], {
+      timeout: 4000,
+    })
     return parseRemote(stdout)
   } catch {
     return null
@@ -137,7 +149,7 @@ export async function listProjects(): Promise<ProjectEntry[]> {
     unique.map(async (dir) => {
       const git = await isGit(dir)
       return { dir, git, repo: git ? await originOf(dir) : null }
-    }),
+    })
   )
 
   // Nach Repo bündeln: zwei Arbeitskopien desselben Repos sind ein Projekt.
@@ -253,7 +265,9 @@ export async function readHooks(): Promise<HooksView> {
 }
 
 /** Schreibt ausschließlich den hooks-Block zurück, alles andere bleibt unberührt. */
-export async function writeHooks(hooksJson: string): Promise<{ ok: true } | { ok: false; error: string }> {
+export async function writeHooks(
+  hooksJson: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
   let parsed: any
   try {
     parsed = JSON.parse(hooksJson)

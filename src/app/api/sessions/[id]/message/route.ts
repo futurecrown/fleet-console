@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
-import { reconfigureSession, resumeSession, runPipeline, sendMessage, stopSession } from '@/lib/sessions'
+import {
+  reconfigureSession,
+  resumeSession,
+  runPipeline,
+  sendMessage,
+  stopSession,
+} from '@/lib/sessions'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -30,7 +36,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       new Promise<{ ok: true }>((r) => setTimeout(() => r({ ok: true }), 2500)),
     ])
     void lauf.catch(() => {})
-    if (!res.ok) return NextResponse.json({ error: (res as { error?: string }).error }, { status: 409 })
+    if (!res.ok)
+      return NextResponse.json({ error: (res as { error?: string }).error }, { status: 409 })
     return NextResponse.json({ ok: true })
   }
 
@@ -52,6 +59,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const text = String(body.text ?? '').trim()
   if (!text) return NextResponse.json({ error: 'Nachricht ist leer' }, { status: 400 })
   const ok = sendMessage(id, text)
-  if (!ok) return NextResponse.json({ error: 'Session nimmt keine Eingaben mehr an' }, { status: 409 })
+  if (!ok)
+    return NextResponse.json({ error: 'Session nimmt keine Eingaben mehr an' }, { status: 409 })
   return NextResponse.json({ ok })
 }

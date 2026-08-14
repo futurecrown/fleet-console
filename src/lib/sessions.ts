@@ -1,4 +1,8 @@
-import { execFile as execFileCb, spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
+import {
+  execFile as execFileCb,
+  spawn,
+  type ChildProcessWithoutNullStreams,
+} from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { promisify } from 'node:util'
@@ -263,7 +267,11 @@ export function cliText(args: string[]): string {
   return [CLAUDE_BIN, ...teile].join(' ')
 }
 
-export function cliPreview(opts: { model: string; skipPermissions: boolean; roles?: string[] }): string {
+export function cliPreview(opts: {
+  model: string
+  skipPermissions: boolean
+  roles?: string[]
+}): string {
   return cliText(buildArgs(opts))
 }
 
@@ -275,7 +283,11 @@ export function startSession(opts: {
   skipPermissions: boolean
 }): SessionState {
   const id = randomUUID()
-  const args = buildArgs({ model: opts.model, skipPermissions: opts.skipPermissions, roles: opts.roles })
+  const args = buildArgs({
+    model: opts.model,
+    skipPermissions: opts.skipPermissions,
+    roles: opts.roles,
+  })
 
   const state: SessionState = {
     id,
@@ -416,11 +428,12 @@ function starteProzess(session: Session, args: string[]): boolean {
  *  bisherige Unterhaltung über --resume fortsetzen. */
 export async function reconfigureSession(
   id: string,
-  opts: { model?: string; skipPermissions?: boolean },
+  opts: { model?: string; skipPermissions?: boolean }
 ): Promise<{ ok: boolean; error?: string }> {
   const s = registry.get(id)
   if (!s) return { ok: false, error: 'Session unbekannt' }
-  if (!s.state.claudeSessionId) return { ok: false, error: 'Session hat noch keine Kennung von Claude' }
+  if (!s.state.claudeSessionId)
+    return { ok: false, error: 'Session hat noch keine Kennung von Claude' }
 
   const model = opts.model ?? s.state.model
   const skipPermissions = opts.skipPermissions ?? s.state.skipPermissions
@@ -472,7 +485,9 @@ function handleEvent(s: Session, ev: any) {
     // Mit --forward-subagent-text kommen die Ereignisse der Subagenten im
     // selben Strom herein, erkennbar an parent_tool_use_id. Sie gehören dem
     // Rollenknoten, nicht dem Orchestrator.
-    const rolle = ev.parent_tool_use_id ? s.pendingAgents.get(String(ev.parent_tool_use_id)) : undefined
+    const rolle = ev.parent_tool_use_id
+      ? s.pendingAgents.get(String(ev.parent_tool_use_id))
+      : undefined
 
     const usage = ev.message?.usage
     if (usage) {
@@ -572,7 +587,10 @@ function handleEvent(s: Session, ev: any) {
       if (!role) continue
       s.pendingAgents.delete(String(block.tool_use_id))
       const roh = Array.isArray(block.content)
-        ? block.content.filter((c: any) => c?.type === 'text').map((c: any) => c.text).join('\n')
+        ? block.content
+            .filter((c: any) => c?.type === 'text')
+            .map((c: any) => c.text)
+            .join('\n')
         : String(block.content ?? '')
       // Wird der Subagent im Hintergrund gestartet, ist das hier nur die
       // Startquittung — kein Ergebnis. Der Knoten bleibt dann auf „läuft".
@@ -581,7 +599,13 @@ function handleEvent(s: Session, ev: any) {
         push(s, { agent: role, kind: 'agent', text: 'im Hintergrund gestartet' })
         continue
       }
-      const ergebnis = roh.split('\n').map((l: string) => l.trim()).filter(Boolean).slice(0, 3).join(' · ').slice(0, 300)
+      const ergebnis = roh
+        .split('\n')
+        .map((l: string) => l.trim())
+        .filter(Boolean)
+        .slice(0, 3)
+        .join(' · ')
+        .slice(0, 300)
       setNode(s, role, {
         status: block.is_error ? 'error' : 'done',
         phase: block.is_error ? 'Fehler' : 'zurückgemeldet',
@@ -733,12 +757,18 @@ export async function listSessions(): Promise<SessionState[]> {
 /** Nimmt eine unterbrochene Session wieder auf: der Stand kommt von der
  *  Platte, die Unterhaltung über `--resume` von Claude. Schlägt der Resume
  *  fehl, wird das gesagt statt still in eine leere Session zu laufen. */
-export async function resumeSession(id: string): Promise<{ ok: boolean; error?: string; state?: SessionState }> {
+export async function resumeSession(
+  id: string
+): Promise<{ ok: boolean; error?: string; state?: SessionState }> {
   if (registry.has(id)) return { ok: true, state: registry.get(id)!.state }
 
   const alt = (await abgelegteSessions()).find((s) => s.id === id)
   if (!alt) return { ok: false, error: 'Lauf nicht in der Ablage gefunden' }
-  if (!alt.claudeSessionId) return { ok: false, error: 'Dieser Lauf hat keine Claude-Kennung — er lässt sich nicht fortsetzen' }
+  if (!alt.claudeSessionId)
+    return {
+      ok: false,
+      error: 'Dieser Lauf hat keine Claude-Kennung — er lässt sich nicht fortsetzen',
+    }
   try {
     await fs.stat(alt.project)
   } catch {
@@ -764,7 +794,11 @@ export async function resumeSession(id: string): Promise<{ ok: boolean; error?: 
   registry.set(id, session)
 
   const args = [
-    ...buildArgs({ model: state.model, skipPermissions: state.skipPermissions, roles: state.roles }),
+    ...buildArgs({
+      model: state.model,
+      skipPermissions: state.skipPermissions,
+      roles: state.roles,
+    }),
     '--resume',
     claudeSessionId,
   ]
@@ -837,12 +871,15 @@ async function persist(s: Session) {
       await fs.writeFile(report, head + s.lastAssistantText, 'utf8')
       state.reportPath = report
     }
-    await fs.writeFile(path.join(RUNS_DIR, `${state.id}.json`), JSON.stringify(state, null, 2), 'utf8')
+    await fs.writeFile(
+      path.join(RUNS_DIR, `${state.id}.json`),
+      JSON.stringify(state, null, 2),
+      'utf8'
+    )
   } catch {
     /* Ablage ist ein Extra — ein Fehler hier darf den Lauf nicht kippen */
   }
 }
-
 
 // ---------------------------------------------------------------- Pipeline
 
@@ -881,7 +918,12 @@ export interface Arbeitsstand {
  *  Arbeit — und genau dort gingen die meisten Anfragen hin. */
 async function sammleArbeitsstand(project: string): Promise<Arbeitsstand | null> {
   const git = async (args: string[]) =>
-    (await execFile('git', ['-C', project, ...args], { maxBuffer: 32 * 1024 * 1024, timeout: 20000 })).stdout
+    (
+      await execFile('git', ['-C', project, ...args], {
+        maxBuffer: 32 * 1024 * 1024,
+        timeout: 20000,
+      })
+    ).stdout
 
   try {
     await git(['rev-parse', '--is-inside-work-tree'])
@@ -948,7 +990,7 @@ async function laufeRolle(
   s: Session,
   rolle: string,
   model: string | null,
-  auftrag: string,
+  auftrag: string
 ): Promise<RollenErgebnis> {
   const args = ['-p', '--output-format', 'stream-json', '--verbose', '--agent', rolle]
   // Ohne --model nimmt die CLI das `model:` aus der Rollendatei. Der
@@ -980,7 +1022,14 @@ async function laufeRolle(
         env: { ...process.env, SECURITY_REVIEW_GATE: 'off' },
       })
     } catch (err) {
-      resolve({ text: '', tokensIn: 0, tokensOut: 0, anfragen: 0, status: 'error', fehler: String(err) })
+      resolve({
+        text: '',
+        tokensIn: 0,
+        tokensOut: 0,
+        anfragen: 0,
+        status: 'error',
+        fehler: String(err),
+      })
       return
     }
     s.rollenProzesse.set(rolle, child)
@@ -991,7 +1040,11 @@ async function laufeRolle(
       ROLE_TIMEOUT_SEC > 0
         ? setTimeout(() => {
             abgelaufen = true
-            push(s, { agent: rolle, kind: 'error', text: `Zeitgrenze von ${ROLE_TIMEOUT_SEC}s erreicht — wird beendet` })
+            push(s, {
+              agent: rolle,
+              kind: 'error',
+              text: `Zeitgrenze von ${ROLE_TIMEOUT_SEC}s erreicht — wird beendet`,
+            })
             beende(child, 'Zeitgrenze')
           }, ROLE_TIMEOUT_SEC * 1000)
         : null
@@ -1055,7 +1108,7 @@ async function laufeRolle(
 export async function runPipeline(
   id: string,
   rollen: string[],
-  opts: { model?: string; auftrag?: string; stand?: boolean } = {},
+  opts: { model?: string; auftrag?: string; stand?: boolean } = {}
 ): Promise<{ ok: boolean; error?: string }> {
   const s = registry.get(id)
   if (!s) return { ok: false, error: 'Session unbekannt' }
@@ -1141,7 +1194,9 @@ export async function runPipeline(
         continue
       }
       const rollenModell = gewaehltesModell ?? modellJeRolle.get(rolle) ?? null
-      setNode(s, rolle, { phase: `arbeitet (eigene Session${rollenModell ? `, ${rollenModell}` : ''})` })
+      setNode(s, rolle, {
+        phase: `arbeitet (eigene Session${rollenModell ? `, ${rollenModell}` : ''})`,
+      })
       push(s, { agent: rolle, kind: 'agent', text: `Rollenlauf: ${grundauftrag.slice(0, 90)}` })
 
       const r = await laufeRolle(s, rolle, gewaehltesModell, auftrag)
@@ -1166,7 +1221,8 @@ export async function runPipeline(
 
       setNode(s, rolle, {
         status: r.status === 'done' ? 'done' : r.status,
-        phase: r.status === 'done' ? 'zurückgemeldet' : r.status === 'timeout' ? 'Zeitgrenze' : 'Fehler',
+        phase:
+          r.status === 'done' ? 'zurückgemeldet' : r.status === 'timeout' ? 'Zeitgrenze' : 'Fehler',
         ergebnis: ergebnis || (r.fehler ?? ''),
         volltext: r.text,
         tokensIn: r.tokensIn,
@@ -1186,7 +1242,10 @@ export async function runPipeline(
         text:
           r.status === 'done'
             ? `fertig · ${r.anfragen} Anfragen · ${r.tokensOut} Tokens aus`
-            : `${r.status === 'timeout' ? 'Zeitgrenze' : 'Fehler'} · ${r.fehler ?? ''}`.slice(0, 200),
+            : `${r.status === 'timeout' ? 'Zeitgrenze' : 'Fehler'} · ${r.fehler ?? ''}`.slice(
+                0,
+                200
+              ),
       })
     }
   }
