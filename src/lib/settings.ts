@@ -10,6 +10,7 @@ import {
   SETTINGS_FILE,
   shortProjectName,
 } from './config'
+import type { HooksView } from './types'
 
 export interface Role {
   name: string
@@ -189,15 +190,6 @@ export interface HookEntry {
   command: string
   timeout?: number
   statusMessage?: string
-}
-
-export interface HooksView {
-  file: string
-  raw: string
-  entries: HookEntry[]
-  gateInstalled: boolean
-  gateScript: string | null
-  gateRuns: { date: string; text: string; result: string }[]
 }
 
 export const GATE_LOG = path.join(FLEET_DIR, 'gate.log')
