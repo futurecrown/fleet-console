@@ -1,0 +1,2185 @@
+{
+  "version": "1.0.0",
+  "schema_version": 1,
+  "project": {
+    "name": "fleet-console-main",
+    "is_monorepo": false,
+    "total_files": 44,
+    "entry_points": [],
+    "tech_stack": [
+      {
+        "name": "Next.js",
+        "version": "15.5.4",
+        "category": "framework"
+      },
+      {
+        "name": "React",
+        "version": "19.1.0",
+        "category": "framework"
+      },
+      {
+        "name": "Node.js",
+        "version": null,
+        "category": "language"
+      },
+      {
+        "name": "TypeScript",
+        "version": "5.7.0",
+        "category": "language"
+      }
+    ],
+    "entry_candidates": [],
+    "graph_mode": "flow"
+  },
+  "nodes": [
+    {
+      "id": "file:.claude/CLAUDE.md",
+      "type": "document",
+      "filePath": ".claude/CLAUDE.md",
+      "language": "markdown",
+      "symbolCount": 0,
+      "lineCount": 133,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 8,
+      "tags": [],
+      "summary": "Repository instructions and context for AI coding agents."
+    },
+    {
+      "id": "file:.claude/settings.local.json",
+      "type": "config",
+      "filePath": ".claude/settings.local.json",
+      "language": "json",
+      "symbolCount": 0,
+      "lineCount": 64,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 9,
+      "tags": [
+        "config"
+      ],
+      "summary": "Configuration file: settings.local.json."
+    },
+    {
+      "id": "file:.mcp.json",
+      "type": "config",
+      "filePath": ".mcp.json",
+      "language": "json",
+      "symbolCount": 0,
+      "lineCount": 8,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 10,
+      "tags": [
+        "config"
+      ],
+      "summary": "Configuration file: .mcp.json."
+    },
+    {
+      "id": "file:DESIGNSYSTEM.md",
+      "type": "document",
+      "filePath": "DESIGNSYSTEM.md",
+      "language": "markdown",
+      "symbolCount": 0,
+      "lineCount": 234,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 11,
+      "tags": [],
+      "summary": "Documentation: DESIGNSYSTEM.md."
+    },
+    {
+      "id": "file:README.md",
+      "type": "document",
+      "filePath": "README.md",
+      "language": "markdown",
+      "symbolCount": 0,
+      "lineCount": 311,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 12,
+      "tags": [],
+      "summary": "Project overview and entry point for new readers."
+    },
+    {
+      "id": "file:docs/ARCHITECTURE.md",
+      "type": "document",
+      "filePath": "docs/ARCHITECTURE.md",
+      "language": "markdown",
+      "symbolCount": 0,
+      "lineCount": 204,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 13,
+      "tags": [],
+      "summary": "Documentation: ARCHITECTURE.md."
+    },
+    {
+      "id": "file:eslint.config.mjs",
+      "type": "file",
+      "filePath": "eslint.config.mjs",
+      "language": "javascript",
+      "symbolCount": 0,
+      "lineCount": 29,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 3,
+      "tags": [],
+      "summary": "Application module eslint.config.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:messages/de.json",
+      "type": "config",
+      "filePath": "messages/de.json",
+      "language": "json",
+      "symbolCount": 0,
+      "lineCount": 167,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 15,
+      "tags": [
+        "config"
+      ],
+      "summary": "Configuration file: de.json."
+    },
+    {
+      "id": "file:messages/en.json",
+      "type": "config",
+      "filePath": "messages/en.json",
+      "language": "json",
+      "symbolCount": 0,
+      "lineCount": 157,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 16,
+      "tags": [
+        "config"
+      ],
+      "summary": "Configuration file: en.json."
+    },
+    {
+      "id": "file:next.config.ts",
+      "type": "file",
+      "filePath": "next.config.ts",
+      "language": "typescript",
+      "symbolCount": 2,
+      "lineCount": 10,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 1,
+      "tags": [],
+      "summary": "Application module next.config (2 symbols).",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:package.json",
+      "type": "config",
+      "filePath": "package.json",
+      "language": "json",
+      "symbolCount": 0,
+      "lineCount": 40,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 17,
+      "tags": [
+        "config"
+      ],
+      "summary": "Node package manifest: dependencies, scripts, and metadata."
+    },
+    {
+      "id": "file:scripts/icon.html",
+      "type": "file",
+      "filePath": "scripts/icon.html",
+      "language": "html",
+      "symbolCount": 0,
+      "lineCount": 35,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 18,
+      "tags": [],
+      "summary": "Docs & Tooling module icon."
+    },
+    {
+      "id": "file:scripts/install-app.sh",
+      "type": "file",
+      "filePath": "scripts/install-app.sh",
+      "language": "shell",
+      "symbolCount": 0,
+      "lineCount": 52,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 19,
+      "tags": [],
+      "summary": "Docs & Tooling module install-app.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:scripts/start.sh",
+      "type": "file",
+      "filePath": "scripts/start.sh",
+      "language": "shell",
+      "symbolCount": 2,
+      "lineCount": 74,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 5,
+      "tags": [],
+      "summary": "Docs & Tooling module start defining melde, laeuft.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/[locale]/layout.tsx",
+      "type": "file",
+      "filePath": "src/app/[locale]/layout.tsx",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 25,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 1,
+      "tags": [],
+      "summary": "Application module layout defining generateStaticParams, RootLayout.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:src/app/[locale]/page.tsx",
+      "type": "file",
+      "filePath": "src/app/[locale]/page.tsx",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 1616,
+      "complexity": "complex",
+      "pagerank": 0.009252,
+      "communityId": 2,
+      "tags": [],
+      "summary": "Application module page defining Page.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/hooks/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/hooks/route.ts",
+      "language": "typescript",
+      "symbolCount": 4,
+      "lineCount": 13,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining GET, PUT.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/meta/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/meta/route.ts",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 17,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining GET.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/runs/[id]/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/runs/[id]/route.ts",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 10,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining GET.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/runs/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/runs/route.ts",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 9,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining GET.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/sessions/[id]/message/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/sessions/[id]/message/route.ts",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 64,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining POST.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/sessions/[id]/stream/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/sessions/[id]/stream/route.ts",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 33,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining GET.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/sessions/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/sessions/route.ts",
+      "language": "typescript",
+      "symbolCount": 4,
+      "lineCount": 30,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining GET, POST.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/app/api/vps/route.ts",
+      "type": "file",
+      "filePath": "src/app/api/vps/route.ts",
+      "language": "typescript",
+      "symbolCount": 4,
+      "lineCount": 22,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 0,
+      "tags": [],
+      "summary": "API module route defining GET, PUT.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/components/AgentGraph.tsx",
+      "type": "file",
+      "filePath": "src/components/AgentGraph.tsx",
+      "language": "typescript",
+      "symbolCount": 6,
+      "lineCount": 379,
+      "complexity": "moderate",
+      "pagerank": 0.010236,
+      "communityId": 2,
+      "tags": [],
+      "summary": "UI module AgentGraph defining icon, Teilchen, statusFarbe.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/components/AnswerView.tsx",
+      "type": "file",
+      "filePath": "src/components/AnswerView.tsx",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 158,
+      "complexity": "moderate",
+      "pagerank": 0.010236,
+      "communityId": 2,
+      "tags": [],
+      "summary": "UI module AnswerView defining inline, Markdown, AnswerView.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/components/HooksView.tsx",
+      "type": "file",
+      "filePath": "src/components/HooksView.tsx",
+      "language": "typescript",
+      "symbolCount": 1,
+      "lineCount": 279,
+      "complexity": "moderate",
+      "pagerank": 0.010236,
+      "communityId": 2,
+      "tags": [],
+      "summary": "UI module HooksView defining HooksView.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/components/LanguageSwitcher.tsx",
+      "type": "file",
+      "filePath": "src/components/LanguageSwitcher.tsx",
+      "language": "typescript",
+      "symbolCount": 1,
+      "lineCount": 23,
+      "complexity": "simple",
+      "pagerank": 0.010236,
+      "communityId": 2,
+      "tags": [],
+      "summary": "UI module LanguageSwitcher defining LanguageSwitcher.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:src/components/RunsView.tsx",
+      "type": "file",
+      "filePath": "src/components/RunsView.tsx",
+      "language": "typescript",
+      "symbolCount": 3,
+      "lineCount": 295,
+      "complexity": "moderate",
+      "pagerank": 0.010236,
+      "communityId": 2,
+      "tags": [],
+      "summary": "UI module RunsView defining RunsView, Stat, Section.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/components/Session/SessionSidebar.tsx",
+      "type": "file",
+      "filePath": "src/components/Session/SessionSidebar.tsx",
+      "language": "typescript",
+      "symbolCount": 2,
+      "lineCount": 113,
+      "complexity": "moderate",
+      "pagerank": 0.009252,
+      "communityId": 2,
+      "tags": [],
+      "summary": "UI module SessionSidebar defining SessionSidebarProps, SessionSidebar.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:src/i18n/request.ts",
+      "type": "file",
+      "filePath": "src/i18n/request.ts",
+      "language": "typescript",
+      "symbolCount": 0,
+      "lineCount": 9,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 1,
+      "tags": [],
+      "summary": "Application module request.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:src/i18n/routing.ts",
+      "type": "file",
+      "filePath": "src/i18n/routing.ts",
+      "language": "typescript",
+      "symbolCount": 1,
+      "lineCount": 7,
+      "complexity": "simple",
+      "pagerank": 0.021328,
+      "communityId": 1,
+      "tags": [],
+      "summary": "Application module routing (1 symbols).",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:src/lib/__tests__/config.test.ts",
+      "type": "file",
+      "filePath": "src/lib/__tests__/config.test.ts",
+      "language": "typescript",
+      "symbolCount": 1,
+      "lineCount": 17,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 14,
+      "tags": [
+        "test"
+      ],
+      "summary": "Tests for config.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:src/lib/__tests__/types.test.ts",
+      "type": "file",
+      "filePath": "src/lib/__tests__/types.test.ts",
+      "language": "typescript",
+      "symbolCount": 0,
+      "lineCount": 21,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 14,
+      "tags": [
+        "test"
+      ],
+      "summary": "Tests for types.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:src/lib/config.ts",
+      "type": "file",
+      "filePath": "src/lib/config.ts",
+      "language": "typescript",
+      "symbolCount": 20,
+      "lineCount": 76,
+      "complexity": "complex",
+      "pagerank": 0.029954,
+      "communityId": 0,
+      "tags": [],
+      "summary": "Service module config defining shortProjectName.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/lib/sessions.ts",
+      "type": "file",
+      "filePath": "src/lib/sessions.ts",
+      "language": "typescript",
+      "symbolCount": 42,
+      "lineCount": 1093,
+      "complexity": "complex",
+      "pagerank": 0.025637,
+      "communityId": 0,
+      "tags": [],
+      "summary": "Service module sessions defining GraphNode, leererKnoten, FeedLine.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/lib/settings.ts",
+      "type": "file",
+      "filePath": "src/lib/settings.ts",
+      "language": "typescript",
+      "symbolCount": 17,
+      "lineCount": 193,
+      "complexity": "complex",
+      "pagerank": 0.018264,
+      "communityId": 0,
+      "tags": [],
+      "summary": "Service module settings defining Role, iconForRole, frontmatter.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/lib/transcripts.ts",
+      "type": "file",
+      "filePath": "src/lib/transcripts.ts",
+      "language": "typescript",
+      "symbolCount": 13,
+      "lineCount": 212,
+      "complexity": "moderate",
+      "pagerank": 0.017117,
+      "communityId": 0,
+      "tags": [],
+      "summary": "Service module transcripts defining RunSummary, RunDetail, listTranscriptFiles.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/lib/types.ts",
+      "type": "file",
+      "filePath": "src/lib/types.ts",
+      "language": "typescript",
+      "symbolCount": 15,
+      "lineCount": 88,
+      "complexity": "moderate",
+      "pagerank": 0.028668,
+      "communityId": 2,
+      "tags": [],
+      "summary": "Service module types defining GraphNode, FeedLine, SessionState.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/lib/vps.ts",
+      "type": "file",
+      "filePath": "src/lib/vps.ts",
+      "language": "typescript",
+      "symbolCount": 9,
+      "lineCount": 127,
+      "complexity": "moderate",
+      "pagerank": 0.013185,
+      "communityId": 0,
+      "tags": [],
+      "summary": "Service module vps defining NightRun, VpsStatus, ssh.",
+      "primaryOwner": "Ivan Walbrunn"
+    },
+    {
+      "id": "file:src/middleware.ts",
+      "type": "file",
+      "filePath": "src/middleware.ts",
+      "language": "typescript",
+      "symbolCount": 1,
+      "lineCount": 4,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 1,
+      "tags": [],
+      "summary": "Application module middleware (1 symbols).",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:tsconfig.json",
+      "type": "config",
+      "filePath": "tsconfig.json",
+      "language": "json",
+      "symbolCount": 0,
+      "lineCount": 14,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 7,
+      "tags": [
+        "config"
+      ],
+      "summary": "TypeScript compiler configuration."
+    },
+    {
+      "id": "file:vitest.config.mts",
+      "type": "file",
+      "filePath": "vitest.config.mts",
+      "language": "typescript",
+      "symbolCount": 0,
+      "lineCount": 8,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 4,
+      "tags": [],
+      "summary": "Application module vitest.config.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "file:vitest.setup.ts",
+      "type": "file",
+      "filePath": "vitest.setup.ts",
+      "language": "typescript",
+      "symbolCount": 0,
+      "lineCount": 0,
+      "complexity": "simple",
+      "pagerank": 0.009252,
+      "communityId": 6,
+      "tags": [],
+      "summary": "Application module vitest.setup.",
+      "primaryOwner": "google-labs-jules[bot]"
+    },
+    {
+      "id": "function:src/lib/config.ts:shortProjectName",
+      "type": "function",
+      "filePath": "src/lib/config.ts",
+      "name": "shortProjectName",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:abgelegteSessions",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "abgelegteSessions",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:beende",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "beende",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:buildArgs",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "buildArgs",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:buildPrompt",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "buildPrompt",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:cliPreview",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "cliPreview",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:cliText",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "cliText",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:describeTool",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "describeTool",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:emit",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "emit",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:getSession",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "getSession",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:handleEvent",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "handleEvent",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:laufeRolle",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "laufeRolle",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:leererKnoten",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "leererKnoten",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:listSessions",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "listSessions",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:node",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "node",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:now",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "now",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:orchestratorAuftrag",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "orchestratorAuftrag",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:persist",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "persist",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:planeAblage",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "planeAblage",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:push",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "push",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:reconfigureSession",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "reconfigureSession",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:resumeSession",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "resumeSession",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:runPipeline",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "runPipeline",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:sammleArbeitsstand",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "sammleArbeitsstand",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:schreibeRollenbericht",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "schreibeRollenbericht",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:sendMessage",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "sendMessage",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:setNode",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "setNode",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:startSession",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "startSession",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:starteProzess",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "starteProzess",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:stopSession",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "stopSession",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/sessions.ts:subscribe",
+      "type": "function",
+      "filePath": "src/lib/sessions.ts",
+      "name": "subscribe",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/types.ts:fmtDate",
+      "type": "function",
+      "filePath": "src/lib/types.ts",
+      "name": "fmtDate",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/types.ts:fmtDuration",
+      "type": "function",
+      "filePath": "src/lib/types.ts",
+      "name": "fmtDuration",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/types.ts:fmtTime",
+      "type": "function",
+      "filePath": "src/lib/types.ts",
+      "name": "fmtTime",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/lib/types.ts:fmtTokens",
+      "type": "function",
+      "filePath": "src/lib/types.ts",
+      "name": "fmtTokens",
+      "language": "typescript",
+      "tags": [],
+      "summary": ""
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:eslint.config.mjs",
+      "target": "file:external:@eslint/js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eslint.config.mjs",
+      "target": "file:external:@next/eslint-plugin-next",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eslint.config.mjs",
+      "target": "file:external:eslint-plugin-react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eslint.config.mjs",
+      "target": "file:external:eslint-plugin-react-hooks",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eslint.config.mjs",
+      "target": "file:external:globals",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eslint.config.mjs",
+      "target": "file:external:typescript-eslint",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:next.config.ts",
+      "target": "file:external:next",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:next.config.ts",
+      "target": "file:external:next-intl/plugin",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/start.sh",
+      "target": "file:external:$HOME/.nvm/nvm.sh",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/layout.tsx",
+      "target": "file:external:@phosphor-icons/web/regular",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/layout.tsx",
+      "target": "file:external:next",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/layout.tsx",
+      "target": "file:external:next-intl",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/layout.tsx",
+      "target": "file:external:next-intl/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/layout.tsx",
+      "target": "file:external:next/navigation",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/layout.tsx",
+      "target": "file:src/i18n/routing.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:external:next-intl",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:external:react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:src/components/AgentGraph.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:src/components/AnswerView.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:src/components/HooksView.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:src/components/LanguageSwitcher.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:src/components/RunsView.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/[locale]/page.tsx",
+      "target": "file:src/lib/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/hooks/route.ts",
+      "target": "file:external:next/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/hooks/route.ts",
+      "target": "file:src/lib/settings.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/meta/route.ts",
+      "target": "file:external:next/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/meta/route.ts",
+      "target": "file:src/lib/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/meta/route.ts",
+      "target": "file:src/lib/sessions.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/meta/route.ts",
+      "target": "file:src/lib/settings.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/runs/[id]/route.ts",
+      "target": "file:external:next/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/runs/[id]/route.ts",
+      "target": "file:src/lib/transcripts.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/runs/route.ts",
+      "target": "file:external:next/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/runs/route.ts",
+      "target": "file:src/lib/transcripts.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/sessions/[id]/message/route.ts",
+      "target": "file:external:next/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/sessions/[id]/message/route.ts",
+      "target": "file:src/lib/sessions.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/sessions/[id]/stream/route.ts",
+      "target": "file:src/lib/sessions.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/sessions/route.ts",
+      "target": "file:external:next/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/sessions/route.ts",
+      "target": "file:external:node:fs/promises",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/sessions/route.ts",
+      "target": "file:src/lib/sessions.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/vps/route.ts",
+      "target": "file:external:next/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/api/vps/route.ts",
+      "target": "file:src/lib/vps.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AgentGraph.tsx",
+      "target": "file:external:react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AgentGraph.tsx",
+      "target": "file:src/lib/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AnswerView.tsx",
+      "target": "file:external:react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AnswerView.tsx",
+      "target": "file:src/lib/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/HooksView.tsx",
+      "target": "file:external:next-intl",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/HooksView.tsx",
+      "target": "file:external:react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/HooksView.tsx",
+      "target": "file:src/lib/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/LanguageSwitcher.tsx",
+      "target": "file:external:next-intl",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/LanguageSwitcher.tsx",
+      "target": "file:external:react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/LanguageSwitcher.tsx",
+      "target": "file:src/i18n/routing.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/RunsView.tsx",
+      "target": "file:external:next-intl",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/RunsView.tsx",
+      "target": "file:external:react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/RunsView.tsx",
+      "target": "file:src/lib/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/Session/SessionSidebar.tsx",
+      "target": "file:external:next-intl",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/i18n/request.ts",
+      "target": "file:external:next-intl/server",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/i18n/request.ts",
+      "target": "file:src/i18n/routing.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/i18n/routing.ts",
+      "target": "file:external:next-intl/navigation",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/i18n/routing.ts",
+      "target": "file:external:next-intl/routing",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/__tests__/config.test.ts",
+      "target": "file:external:vitest",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/__tests__/config.test.ts",
+      "target": "file:src/lib/config.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/__tests__/types.test.ts",
+      "target": "file:external:vitest",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/__tests__/types.test.ts",
+      "target": "file:src/lib/types.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/config.ts",
+      "target": "file:external:node:os",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/config.ts",
+      "target": "file:external:node:path",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/config.ts",
+      "target": "function:src/lib/config.ts:shortProjectName",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "file:external:node:child_process",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "file:external:node:crypto",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "file:external:node:fs/promises",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "file:external:node:path",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "file:external:node:util",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "file:src/lib/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "file:src/lib/settings.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:abgelegteSessions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:beende",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:buildArgs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:buildPrompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:cliPreview",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:cliText",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:describeTool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:emit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:getSession",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:handleEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:laufeRolle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:leererKnoten",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:listSessions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:now",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:orchestratorAuftrag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:persist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:planeAblage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:push",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:reconfigureSession",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:resumeSession",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:runPipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:sammleArbeitsstand",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:schreibeRollenbericht",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:sendMessage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:setNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:startSession",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:starteProzess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:stopSession",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/sessions.ts",
+      "target": "function:src/lib/sessions.ts:subscribe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/settings.ts",
+      "target": "file:external:node:child_process",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/settings.ts",
+      "target": "file:external:node:fs/promises",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/settings.ts",
+      "target": "file:external:node:path",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/settings.ts",
+      "target": "file:external:node:util",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/settings.ts",
+      "target": "file:src/lib/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/transcripts.ts",
+      "target": "file:external:node:fs/promises",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/transcripts.ts",
+      "target": "file:external:node:path",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/transcripts.ts",
+      "target": "file:src/lib/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/types.ts",
+      "target": "function:src/lib/types.ts:fmtDate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/types.ts",
+      "target": "function:src/lib/types.ts:fmtDuration",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/types.ts",
+      "target": "function:src/lib/types.ts:fmtTime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/types.ts",
+      "target": "function:src/lib/types.ts:fmtTokens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/vps.ts",
+      "target": "file:external:node:child_process",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/vps.ts",
+      "target": "file:external:node:util",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/lib/vps.ts",
+      "target": "file:src/lib/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/middleware.ts",
+      "target": "file:external:next-intl/middleware",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/middleware.ts",
+      "target": "file:src/i18n/routing.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tsconfig.json",
+      "target": "file:src",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0,
+      "hint": "node_package"
+    },
+    {
+      "source": "file:vitest.config.mts",
+      "target": "file:external:@vitejs/plugin-react",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:vitest.config.mts",
+      "target": "file:external:path",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:vitest.config.mts",
+      "target": "file:external:vitest/config",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:vitest.setup.ts",
+      "target": "file:external:@testing-library/jest-dom",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:api",
+      "name": "API",
+      "description": "",
+      "nodeIds": [
+        "file:src/app/api/hooks/route.ts",
+        "file:src/app/api/meta/route.ts",
+        "file:src/app/api/runs/[id]/route.ts",
+        "file:src/app/api/runs/route.ts",
+        "file:src/app/api/sessions/[id]/message/route.ts",
+        "file:src/app/api/sessions/[id]/stream/route.ts",
+        "file:src/app/api/sessions/route.ts",
+        "file:src/app/api/vps/route.ts"
+      ],
+      "display_order": 0,
+      "order_basis": "imports"
+    },
+    {
+      "id": "layer:application",
+      "name": "Application",
+      "description": "",
+      "nodeIds": [
+        "file:.mcp.json",
+        "file:DESIGNSYSTEM.md",
+        "file:README.md",
+        "file:eslint.config.mjs",
+        "file:messages/de.json",
+        "file:messages/en.json",
+        "file:next.config.ts",
+        "file:package.json",
+        "file:src/app/[locale]/layout.tsx",
+        "file:src/app/[locale]/page.tsx",
+        "file:src/i18n/request.ts",
+        "file:src/i18n/routing.ts",
+        "file:src/middleware.ts",
+        "file:tsconfig.json",
+        "file:vitest.config.mts",
+        "file:vitest.setup.ts"
+      ],
+      "display_order": 1,
+      "order_basis": "imports"
+    },
+    {
+      "id": "layer:ui",
+      "name": "UI",
+      "description": "",
+      "nodeIds": [
+        "file:src/components/AgentGraph.tsx",
+        "file:src/components/AnswerView.tsx",
+        "file:src/components/HooksView.tsx",
+        "file:src/components/LanguageSwitcher.tsx",
+        "file:src/components/RunsView.tsx",
+        "file:src/components/Session/SessionSidebar.tsx"
+      ],
+      "display_order": 2,
+      "order_basis": "imports"
+    },
+    {
+      "id": "layer:config",
+      "name": "Config",
+      "description": "",
+      "nodeIds": [
+        "file:.claude/CLAUDE.md",
+        "file:.claude/settings.local.json"
+      ],
+      "display_order": 3,
+      "order_basis": "imports"
+    },
+    {
+      "id": "layer:service",
+      "name": "Service",
+      "description": "",
+      "nodeIds": [
+        "file:src/lib/config.ts",
+        "file:src/lib/sessions.ts",
+        "file:src/lib/settings.ts",
+        "file:src/lib/transcripts.ts",
+        "file:src/lib/types.ts",
+        "file:src/lib/vps.ts"
+      ],
+      "display_order": 4,
+      "order_basis": "imports"
+    },
+    {
+      "id": "layer:docs-tooling",
+      "name": "Docs & Tooling",
+      "description": "",
+      "nodeIds": [
+        "file:docs/ARCHITECTURE.md",
+        "file:scripts/icon.html",
+        "file:scripts/install-app.sh",
+        "file:scripts/start.sh"
+      ],
+      "display_order": 5,
+      "order_basis": "imports"
+    },
+    {
+      "id": "layer:test",
+      "name": "Test",
+      "description": "",
+      "nodeIds": [
+        "file:src/lib/__tests__/config.test.ts",
+        "file:src/lib/__tests__/types.test.ts"
+      ],
+      "display_order": 6,
+      "order_basis": "imports"
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "target_path": "README.md",
+      "page_type": "repo_overview",
+      "title": "README.md",
+      "depth": 0,
+      "kind": "overview",
+      "reason": "Start here for the end-to-end picture before diving into the code.",
+      "layer_id": "layer:application",
+      "wikiPageIds": []
+    },
+    {
+      "order": 2,
+      "target_path": "src/app/[locale]/page.tsx",
+      "page_type": "file_page",
+      "title": "page.tsx",
+      "depth": 0,
+      "kind": "code",
+      "reason": "The walk's anchor \u2014 its imports fan out the widest in a repo with no single entry point.",
+      "layer_id": "layer:application",
+      "wikiPageIds": []
+    },
+    {
+      "order": 3,
+      "target_path": "src/lib/types.ts",
+      "page_type": "file_page",
+      "title": "types.ts",
+      "depth": 1,
+      "kind": "code",
+      "reason": "Directly imported by the anchor above; a core collaborator.",
+      "layer_id": "layer:service",
+      "wikiPageIds": []
+    },
+    {
+      "order": 4,
+      "target_path": "src/components/AgentGraph.tsx",
+      "page_type": "file_page",
+      "title": "AgentGraph.tsx",
+      "depth": 1,
+      "kind": "code",
+      "reason": "Directly imported by the anchor above; a core collaborator.",
+      "layer_id": "layer:ui",
+      "wikiPageIds": []
+    },
+    {
+      "order": 5,
+      "target_path": "src/components/AnswerView.tsx",
+      "page_type": "file_page",
+      "title": "AnswerView.tsx",
+      "depth": 1,
+      "kind": "code",
+      "reason": "Directly imported by the anchor above; a core collaborator.",
+      "layer_id": "layer:ui",
+      "wikiPageIds": []
+    },
+    {
+      "order": 6,
+      "target_path": "src/components/HooksView.tsx",
+      "page_type": "file_page",
+      "title": "HooksView.tsx",
+      "depth": 1,
+      "kind": "code",
+      "reason": "Directly imported by the anchor above; a core collaborator.",
+      "layer_id": "layer:ui",
+      "wikiPageIds": []
+    },
+    {
+      "order": 7,
+      "target_path": "src/components/LanguageSwitcher.tsx",
+      "page_type": "file_page",
+      "title": "LanguageSwitcher.tsx",
+      "depth": 1,
+      "kind": "code",
+      "reason": "Directly imported by the anchor above; a core collaborator.",
+      "layer_id": "layer:ui",
+      "wikiPageIds": []
+    },
+    {
+      "order": 8,
+      "target_path": "src/components/RunsView.tsx",
+      "page_type": "file_page",
+      "title": "RunsView.tsx",
+      "depth": 1,
+      "kind": "code",
+      "reason": "Directly imported by the anchor above; a core collaborator.",
+      "layer_id": "layer:ui",
+      "wikiPageIds": []
+    },
+    {
+      "order": 9,
+      "target_path": "src/i18n/routing.ts",
+      "page_type": "file_page",
+      "title": "routing.ts",
+      "depth": 2,
+      "kind": "code",
+      "reason": "Reached 2 imports deep \u2014 a supporting building block.",
+      "layer_id": "layer:application",
+      "wikiPageIds": []
+    },
+    {
+      "order": 10,
+      "target_path": "scripts/icon.html",
+      "page_type": "file_page",
+      "title": "icon.html",
+      "depth": 3,
+      "kind": "code",
+      "reason": "The Docs & Tooling layer's anchor \u2014 its most depended-on file.",
+      "layer_id": "layer:docs-tooling",
+      "wikiPageIds": []
+    },
+    {
+      "order": 11,
+      "target_path": "src/app/api/hooks/route.ts",
+      "page_type": "file_page",
+      "title": "route.ts",
+      "depth": 3,
+      "kind": "code",
+      "reason": "The API layer's anchor \u2014 its most depended-on file.",
+      "layer_id": "layer:api",
+      "wikiPageIds": []
+    },
+    {
+      "order": 12,
+      "target_path": "src/lib/__tests__/config.test.ts",
+      "page_type": "file_page",
+      "title": "config.test.ts",
+      "depth": 4,
+      "kind": "code",
+      "reason": "The test suite \u2014 how the system's behavior is verified.",
+      "layer_id": "layer:test",
+      "wikiPageIds": []
+    }
+  ],
+  "modules": [
+    {
+      "id": "module:src-app-api",
+      "name": "API",
+      "path": "src/app/api",
+      "layerId": "layer:api",
+      "nodeIds": [
+        "file:src/app/api/hooks/route.ts",
+        "file:src/app/api/meta/route.ts",
+        "file:src/app/api/runs/[id]/route.ts",
+        "file:src/app/api/runs/route.ts",
+        "file:src/app/api/sessions/[id]/message/route.ts",
+        "file:src/app/api/sessions/[id]/stream/route.ts",
+        "file:src/app/api/sessions/route.ts",
+        "file:src/app/api/vps/route.ts"
+      ],
+      "wholeLayer": true,
+      "language": "typescript"
+    },
+    {
+      "id": "module:application",
+      "name": "Application",
+      "path": "",
+      "layerId": "layer:application",
+      "nodeIds": [
+        "file:.mcp.json",
+        "file:DESIGNSYSTEM.md",
+        "file:README.md",
+        "file:eslint.config.mjs",
+        "file:messages/de.json",
+        "file:messages/en.json",
+        "file:next.config.ts",
+        "file:package.json",
+        "file:src/app/[locale]/layout.tsx",
+        "file:src/app/[locale]/page.tsx",
+        "file:src/i18n/request.ts",
+        "file:src/i18n/routing.ts",
+        "file:src/middleware.ts",
+        "file:tsconfig.json",
+        "file:vitest.config.mts",
+        "file:vitest.setup.ts"
+      ],
+      "wholeLayer": true,
+      "language": "typescript"
+    },
+    {
+      "id": "module:src-components",
+      "name": "UI",
+      "path": "src/components",
+      "layerId": "layer:ui",
+      "nodeIds": [
+        "file:src/components/AgentGraph.tsx",
+        "file:src/components/AnswerView.tsx",
+        "file:src/components/HooksView.tsx",
+        "file:src/components/LanguageSwitcher.tsx",
+        "file:src/components/RunsView.tsx",
+        "file:src/components/Session/SessionSidebar.tsx"
+      ],
+      "wholeLayer": true,
+      "language": "typescript"
+    },
+    {
+      "id": "module:src-lib",
+      "name": "Service",
+      "path": "src/lib",
+      "layerId": "layer:service",
+      "nodeIds": [
+        "file:src/lib/config.ts",
+        "file:src/lib/sessions.ts",
+        "file:src/lib/settings.ts",
+        "file:src/lib/transcripts.ts",
+        "file:src/lib/types.ts",
+        "file:src/lib/vps.ts"
+      ],
+      "wholeLayer": true,
+      "language": "typescript"
+    },
+    {
+      "id": "module:docs-tooling",
+      "name": "Docs & Tooling",
+      "path": "",
+      "layerId": "layer:docs-tooling",
+      "nodeIds": [
+        "file:docs/ARCHITECTURE.md",
+        "file:scripts/icon.html",
+        "file:scripts/install-app.sh",
+        "file:scripts/start.sh"
+      ],
+      "wholeLayer": true,
+      "language": "shell"
+    }
+  ]
+}
