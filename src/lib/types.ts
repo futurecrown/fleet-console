@@ -101,15 +101,6 @@ export interface HookEntry {
   statusMessage?: string
 }
 
-export interface HooksView {
-  file: string
-  raw: string
-  entries: HookEntry[]
-  gateInstalled: boolean
-  gateScript: string | null
-  gateRuns: { date: string; text: string; result: string }[]
-}
-
 export interface NightRun {
   name: string
   schedule: string
