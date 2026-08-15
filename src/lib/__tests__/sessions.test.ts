@@ -245,3 +245,74 @@ describe('Sessions / integration checks', () => {
     expect(typeof text).toBe('string')
   })
 })
+
+describe('Sessions / Error Handling & Edge Cases', () => {
+  test('buildArgs handles undefined roles array', () => {
+    const args = buildArgs({
+      model: 'sonnet',
+      skipPermissions: false,
+      roles: undefined,
+    })
+    expect(Array.isArray(args)).toBe(true)
+    expect(args).toContain('--model')
+  })
+
+  test('buildArgs with empty string model', () => {
+    const args = buildArgs({
+      model: '',
+      skipPermissions: false,
+    })
+    expect(args).toContain('--model')
+    expect(args).toContain('')
+  })
+
+  test('cliText handles empty args array', () => {
+    const text = cliText([])
+    expect(typeof text).toBe('string')
+    expect(text).toContain('claude')
+  })
+
+  test('orchestratorAuftrag handles special characters in role names', () => {
+    const prompt = orchestratorAuftrag(['role-with-dash', 'role_with_underscore'])
+    expect(prompt).toContain('role-with-dash')
+    expect(prompt).toContain('role_with_underscore')
+  })
+
+  test('leererKnoten handles numeric string ID', () => {
+    const node = leererKnoten('123')
+    expect(node.id).toBe('123')
+  })
+
+  test('leererKnoten handles empty string ID', () => {
+    const node = leererKnoten('')
+    expect(node.id).toBe('')
+    expect(node.status).toBe('idle')
+  })
+
+  test('cliText preserves model name correctly', () => {
+    const args = ['--model', 'opus-4', '--verbose']
+    const text = cliText(args)
+    expect(text).toContain('opus-4')
+  })
+
+  test('buildArgs with multiple roles creates valid orchestrator prompt', () => {
+    const args = buildArgs({
+      model: 'sonnet',
+      skipPermissions: false,
+      roles: ['role1', 'role2', 'role3'],
+    })
+    expect(args).toContain('--append-system-prompt')
+    expect(args).toContain('--forward-subagent-text')
+    const idx = args.indexOf('--append-system-prompt')
+    expect(idx).toBeGreaterThanOrEqual(0)
+    expect(args[idx + 1]).toContain('Orchestrator')
+  })
+
+  test('orchestratorAuftrag with many roles formats consistently', () => {
+    const roles = Array.from({ length: 5 }, (_, i) => `role-${i}`)
+    const prompt = orchestratorAuftrag(roles)
+    roles.forEach((role) => {
+      expect(prompt).toContain(role)
+    })
+  })
+})

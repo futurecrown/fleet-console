@@ -12,6 +12,12 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+
+  // Validate session ID format
+  if (!id || typeof id !== 'string' || id.length > 100) {
+    return NextResponse.json({ error: 'Ungültige Session-ID' }, { status: 400 })
+  }
+
   const body = await req.json().catch(() => ({}))
 
   if (body.action === 'stop') {
@@ -58,6 +64,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const text = String(body.text ?? '').trim()
   if (!text) return NextResponse.json({ error: 'Nachricht ist leer' }, { status: 400 })
+  if (text.length > 50000) {
+    return NextResponse.json({ error: 'Nachricht zu lang (max 50000 Zeichen)' }, { status: 400 })
+  }
   const ok = sendMessage(id, text)
   if (!ok)
     return NextResponse.json({ error: 'Session nimmt keine Eingaben mehr an' }, { status: 409 })

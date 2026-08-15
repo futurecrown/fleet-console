@@ -1,8 +1,8 @@
 {
-  "last_sync_commit": "db98a0891a2155a39afbc319779bab788c3e626f",
+  "last_sync_commit": "b0afd67f10e9eccbde88a43c804286548abb8bcb",
   "docs_mode": "llm",
   "docs_enabled": true,
-  "total_pages": 48,
+  "total_pages": 47,
   "run_mode": "standard",
   "git_tier": "full",
   "include_submodules": false,

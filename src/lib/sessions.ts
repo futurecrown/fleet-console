@@ -49,6 +49,7 @@ export interface GraphNode {
   endedAt: string | null
 }
 
+/** Creates an empty graph node with default state. Used for orchestrator and role nodes. */
 export function leererKnoten(id: string): GraphNode {
   return {
     id,
@@ -204,6 +205,12 @@ function buildPrompt(roles: string[], prompt: string): string {
 
 /** Steht als Systemanweisung in JEDER Runde — nicht nur in der ersten
  *  Nachricht. Ohne das erledigt der Orchestrator Folgeaufträge selbst. */
+/**
+ * Generates the orchestrator system prompt for role delegation.
+ * Instructs Claude to use Agent-Tool for specified roles and wait for responses.
+ * @param roles - Role names to include in the prompt (e.g., ['security-reviewer', 'senior-developer'])
+ * @returns Multi-line system prompt as a single string
+ */
 export function orchestratorAuftrag(roles: string[]): string {
   const liste = roles.map((r) => `\`${r}\``).join(', ')
   return [
@@ -223,6 +230,14 @@ export function orchestratorAuftrag(roles: string[]): string {
   ].join('\n')
 }
 
+/**
+ * Builds CLI arguments for the Claude process.
+ * Includes orchestrator prompt if roles are provided.
+ * @param opts.model - Claude model (e.g., 'sonnet', 'opus')
+ * @param opts.skipPermissions - Disable permission prompts (caution: unsafe)
+ * @param opts.roles - Optional roles for agent delegation
+ * @returns Array of CLI arguments ready for spawn
+ */
 export function buildArgs(opts: {
   model: string
   skipPermissions: boolean
@@ -255,6 +270,11 @@ export function buildArgs(opts: {
 /** Aufruf als Text für die Anzeige. Der Rollenauftrag hinter
  *  `--append-system-prompt` ist ein Absatz Fließtext — ungekürzt sprengt er
  *  jeden Kasten und verdeckt die Flags, auf die es ankommt. */
+/**
+ * Formats CLI arguments for display, truncating long role prompts.
+ * @param args - Array of CLI arguments
+ * @returns Single-line CLI command string with role prompt replaced by «Rollenauftrag»
+ */
 export function cliText(args: string[]): string {
   const teile: string[] = []
   for (let i = 0; i < args.length; i++) {
@@ -267,6 +287,16 @@ export function cliText(args: string[]): string {
   return [CLAUDE_BIN, ...teile].join(' ')
 }
 
+/**
+ * Starts a new Claude session in the specified project.
+ * The process runs asynchronously; errors go to session.status='fehler'.
+ * @param opts.project - Working directory (must be a valid path)
+ * @param opts.model - Claude model to use
+ * @param opts.roles - Role names for agent delegation (optional)
+ * @param opts.prompt - Initial task/prompt for the session
+ * @param opts.skipPermissions - Skip permission checks (caution: unsafe)
+ * @returns Initial SessionState with id, nodes, and log; process runs in background
+ */
 export function startSession(opts: {
   project: string
   model: string
@@ -416,8 +446,14 @@ function starteProzess(session: Session, args: string[]): boolean {
   return true
 }
 
-/** Modell oder Berechtigungen im Lauf ändern: Prozess neu starten und die
- *  bisherige Unterhaltung über --resume fortsetzen. */
+/**
+ * Reconfigures a running session by changing model or permissions.
+ * Restarts the process and resumes the conversation via --resume.
+ * @param id - Session ID
+ * @param opts.model - New model to use (optional)
+ * @param opts.skipPermissions - New permission setting (optional)
+ * @returns Promise resolving to {ok: true} or {ok: false, error: string}
+ */
 export async function reconfigureSession(
   id: string,
   opts: { model?: string; skipPermissions?: boolean }
@@ -457,205 +493,211 @@ export async function reconfigureSession(
   return ok ? { ok: true } : { ok: false, error: 'Neustart fehlgeschlagen' }
 }
 
-function handleEvent(s: Session, ev: any) {
+/** Handles system events (session_id, init). */
+function handleSystemEvent(s: Session, ev: any) {
   const state = s.state
+  if (ev.session_id) state.claudeSessionId = ev.session_id
+  if (ev.subtype === 'init') {
+    setNode(s, 'orchestrator', { phase: 'Kontext geladen' })
+    push(s, {
+      agent: 'orchestrator',
+      kind: 'system',
+      text: `Session ${String(ev.session_id ?? '').slice(0, 8)} · Modell ${ev.model ?? state.model}`,
+    })
+  }
+}
 
-  if (ev.type === 'system') {
-    if (ev.session_id) state.claudeSessionId = ev.session_id
-    if (ev.subtype === 'init') {
-      setNode(s, 'orchestrator', { phase: 'Kontext geladen' })
-      push(s, {
-        agent: 'orchestrator',
-        kind: 'system',
-        text: `Session ${String(ev.session_id ?? '').slice(0, 8)} · Modell ${ev.model ?? state.model}`,
-      })
-    }
-    return
+/** Handles assistant events (usage tokens, text, tool_use). */
+function handleAssistantEvent(s: Session, ev: any) {
+  const state = s.state
+  const rolle = ev.parent_tool_use_id ? s.pendingAgents.get(String(ev.parent_tool_use_id)) : undefined
+
+  const usage = ev.message?.usage
+  if (usage) {
+    state.anfragen += 1
+    state.tokensIn += usage.input_tokens ?? 0
+    state.tokensCacheWrite += usage.cache_creation_input_tokens ?? 0
+    state.tokensCached = Math.max(state.tokensCached, usage.cache_read_input_tokens ?? 0)
+    state.tokensOut += usage.output_tokens ?? 0
+    const zielKnoten = rolle ?? 'orchestrator'
+    const n = node(s, zielKnoten)
+    setNode(s, zielKnoten, {
+      anfragen: n.anfragen + 1,
+      tokensIn: n.tokensIn + (usage.input_tokens ?? 0),
+      tokensOut: n.tokensOut + (usage.output_tokens ?? 0),
+    })
+    emit(s, 'tokens', {
+      in: state.tokensIn,
+      out: state.tokensOut,
+      cached: state.tokensCached,
+      cacheWrite: state.tokensCacheWrite,
+      anfragen: state.anfragen,
+    })
   }
 
-  if (ev.type === 'assistant') {
-    // Mit --forward-subagent-text kommen die Ereignisse der Subagenten im
-    // selben Strom herein, erkennbar an parent_tool_use_id. Sie gehören dem
-    // Rollenknoten, nicht dem Orchestrator.
-    const rolle = ev.parent_tool_use_id
-      ? s.pendingAgents.get(String(ev.parent_tool_use_id))
-      : undefined
+  const content = ev.message?.content
+  if (!Array.isArray(content)) return
 
-    const usage = ev.message?.usage
-    if (usage) {
-      // Frische Eingabe und Cache getrennt zählen: cache_read wiederholt sich
-      // bei jeder Anfrage, aufsummiert ergäbe das absurde Zahlen.
-      state.anfragen += 1
-      state.tokensIn += usage.input_tokens ?? 0
-      state.tokensCacheWrite += usage.cache_creation_input_tokens ?? 0
-      state.tokensCached = Math.max(state.tokensCached, usage.cache_read_input_tokens ?? 0)
-      state.tokensOut += usage.output_tokens ?? 0
-      // Auch der Orchestrator bekommt seine eigene Rechnung — sonst steht die
-      // Koordination selbst nie in den Zahlen.
-      const zielKnoten = rolle ?? 'orchestrator'
-      const n = node(s, zielKnoten)
-      setNode(s, zielKnoten, {
-        anfragen: n.anfragen + 1,
-        tokensIn: n.tokensIn + (usage.input_tokens ?? 0),
-        tokensOut: n.tokensOut + (usage.output_tokens ?? 0),
-      })
-      emit(s, 'tokens', {
-        in: state.tokensIn,
-        out: state.tokensOut,
-        cached: state.tokensCached,
-        cacheWrite: state.tokensCacheWrite,
-        anfragen: state.anfragen,
-      })
-    }
-    const content = ev.message?.content
-    if (!Array.isArray(content)) return
-
-    // Arbeit eines Subagenten: als Phase des Knotens zeigen, nicht als
-    // Antwort des Orchestrators sammeln.
-    if (rolle) {
-      for (const block of content) {
-        if (block?.type === 'text' && block.text?.trim()) {
-          const zeile = String(block.text).trim().split('\n')[0].slice(0, 80)
-          setNode(s, rolle, { phase: zeile })
-          push(s, { agent: rolle, kind: 'text', text: zeile })
-        }
-        if (block?.type === 'tool_use') {
-          const ziel = describeTool(String(block.name), block.input)
-          setNode(s, rolle, { phase: ziel.slice(0, 80) })
-          push(s, { agent: rolle, kind: 'tool', text: `→ ${ziel}` })
-        }
-      }
-      return
-    }
-
+  if (rolle) {
     for (const block of content) {
       if (block?.type === 'text' && block.text?.trim()) {
-        const volltext = String(block.text)
-        s.lastAssistantText = volltext
-        state.antworten.push({ t: now(), text: volltext })
-        emit(s, 'antwort', state.antworten[state.antworten.length - 1])
-        // Im technischen Feed nur ein Verweis — der Text steht in der Antwort.
-        push(s, {
-          agent: 'orchestrator',
-          kind: 'text',
-          text: `antwortet (${volltext.length} Zeichen) · ${volltext.trim().split('\n')[0].slice(0, 90)}`,
-        })
+        const zeile = String(block.text).trim().split('\n')[0].slice(0, 80)
+        setNode(s, rolle, { phase: zeile })
+        push(s, { agent: rolle, kind: 'text', text: zeile })
       }
       if (block?.type === 'tool_use') {
-        const name = String(block.name)
-        if (name === 'Agent' || name === 'Task') {
-          const role = String(block.input?.subagent_type ?? 'allgemein')
-          const desc = String(block.input?.description ?? block.input?.prompt ?? '').slice(0, 90)
-          if (block.id) s.pendingAgents.set(String(block.id), role)
-          const n = node(s, role)
-          s.orderCounter += 1
-          setNode(s, role, {
-            status: 'running',
-            phase: desc || 'arbeitet',
-            calls: n.calls + 1,
-            order: n.order ?? s.orderCounter,
-            auftrag: String(block.input?.prompt ?? block.input?.description ?? ''),
-            quelle: 'agent-tool',
-            startedAt: now(),
-            endedAt: null,
-          })
-          push(s, { agent: role, kind: 'agent', text: `beauftragt · ${desc}` })
-        } else {
-          const target = describeTool(name, block.input)
-          setNode(s, 'orchestrator', { phase: target })
-          push(s, { agent: 'orchestrator', kind: 'tool', text: `→ ${target}` })
-        }
+        const ziel = describeTool(String(block.name), block.input)
+        setNode(s, rolle, { phase: ziel.slice(0, 80) })
+        push(s, { agent: rolle, kind: 'tool', text: `→ ${ziel}` })
       }
     }
     return
   }
 
-  if (ev.type === 'user') {
-    const content = ev.message?.content
-    if (!Array.isArray(content)) return
-    for (const block of content) {
-      if (block?.type !== 'tool_result') continue
-      const role = s.pendingAgents.get(String(block.tool_use_id))
-      if (!role) continue
-      s.pendingAgents.delete(String(block.tool_use_id))
-      const roh = Array.isArray(block.content)
-        ? block.content
-            .filter((c: any) => c?.type === 'text')
-            .map((c: any) => c.text)
-            .join('\n')
-        : String(block.content ?? '')
-      // Wird der Subagent im Hintergrund gestartet, ist das hier nur die
-      // Startquittung — kein Ergebnis. Der Knoten bleibt dann auf „läuft".
-      if (/async agent launched|internal metadata/i.test(roh)) {
-        setNode(s, role, { status: 'running', phase: 'arbeitet im Hintergrund' })
-        push(s, { agent: role, kind: 'agent', text: 'im Hintergrund gestartet' })
-        continue
-      }
-      const ergebnis = roh
-        .split('\n')
-        .map((l: string) => l.trim())
-        .filter(Boolean)
-        .slice(0, 3)
-        .join(' · ')
-        .slice(0, 300)
-      setNode(s, role, {
-        status: block.is_error ? 'error' : 'done',
-        phase: block.is_error ? 'Fehler' : 'zurückgemeldet',
-        ergebnis,
-        volltext: roh,
-        endedAt: now(),
-      })
-      void schreibeRollenbericht(s, role, roh)
+  for (const block of content) {
+    if (block?.type === 'text' && block.text?.trim()) {
+      const volltext = String(block.text)
+      s.lastAssistantText = volltext
+      state.antworten.push({ t: now(), text: volltext })
+      emit(s, 'antwort', state.antworten[state.antworten.length - 1])
       push(s, {
-        agent: role,
-        kind: 'agent',
-        text: block.is_error ? 'mit Fehler beendet' : `meldet zurück · ${ergebnis.slice(0, 120)}`,
+        agent: 'orchestrator',
+        kind: 'text',
+        text: `antwortet (${volltext.length} Zeichen) · ${volltext.trim().split('\n')[0].slice(0, 90)}`,
       })
     }
-    return
+    if (block?.type === 'tool_use') {
+      const name = String(block.name)
+      if (name === 'Agent' || name === 'Task') {
+        const role = String(block.input?.subagent_type ?? 'allgemein')
+        const desc = String(block.input?.description ?? block.input?.prompt ?? '').slice(0, 90)
+        if (block.id) s.pendingAgents.set(String(block.id), role)
+        const n = node(s, role)
+        s.orderCounter += 1
+        setNode(s, role, {
+          status: 'running',
+          phase: desc || 'arbeitet',
+          calls: n.calls + 1,
+          order: n.order ?? s.orderCounter,
+          auftrag: String(block.input?.prompt ?? block.input?.description ?? ''),
+          quelle: 'agent-tool',
+          startedAt: now(),
+          endedAt: null,
+        })
+        push(s, { agent: role, kind: 'agent', text: `beauftragt · ${desc}` })
+      } else {
+        const target = describeTool(name, block.input)
+        setNode(s, 'orchestrator', { phase: target })
+        push(s, { agent: 'orchestrator', kind: 'tool', text: `→ ${target}` })
+      }
+    }
+  }
+}
+
+/** Handles user events (tool_result from agent execution). */
+function handleUserEvent(s: Session, ev: any) {
+  const state = s.state
+  const content = ev.message?.content
+  if (!Array.isArray(content)) return
+
+  for (const block of content) {
+    if (block?.type !== 'tool_result') continue
+    const role = s.pendingAgents.get(String(block.tool_use_id))
+    if (!role) continue
+    s.pendingAgents.delete(String(block.tool_use_id))
+
+    const roh = Array.isArray(block.content)
+      ? block.content
+          .filter((c: any) => c?.type === 'text')
+          .map((c: any) => c.text)
+          .join('\n')
+      : String(block.content ?? '')
+
+    if (/async agent launched|internal metadata/i.test(roh)) {
+      setNode(s, role, { status: 'running', phase: 'arbeitet im Hintergrund' })
+      push(s, { agent: role, kind: 'agent', text: 'im Hintergrund gestartet' })
+      continue
+    }
+
+    const ergebnis = roh
+      .split('\n')
+      .map((l: string) => l.trim())
+      .filter(Boolean)
+      .slice(0, 3)
+      .join(' · ')
+      .slice(0, 300)
+
+    setNode(s, role, {
+      status: block.is_error ? 'error' : 'done',
+      phase: block.is_error ? 'Fehler' : 'zurückgemeldet',
+      ergebnis,
+      volltext: roh,
+      endedAt: now(),
+    })
+    void schreibeRollenbericht(s, role, roh)
+    push(s, {
+      agent: role,
+      kind: 'agent',
+      text: block.is_error ? 'mit Fehler beendet' : `meldet zurück · ${ergebnis.slice(0, 120)}`,
+    })
+  }
+}
+
+/** Handles result events (end of round). */
+function handleResultEvent(s: Session, ev: any) {
+  const state = s.state
+  const usage = ev.usage
+  if (usage) {
+    state.tokensOut = Math.max(state.tokensOut, usage.output_tokens ?? 0)
+    emit(s, 'tokens', {
+      in: state.tokensIn,
+      out: state.tokensOut,
+      cached: state.tokensCached,
+      cacheWrite: state.tokensCacheWrite,
+      anfragen: state.anfragen,
+    })
   }
 
-  if (ev.type === 'result') {
-    const usage = ev.usage
-    if (usage) {
-      state.tokensOut = Math.max(state.tokensOut, usage.output_tokens ?? 0)
-      emit(s, 'tokens', {
-        in: state.tokensIn,
-        out: state.tokensOut,
-        cached: state.tokensCached,
-        cacheWrite: state.tokensCacheWrite,
-        anfragen: state.anfragen,
-      })
+  push(s, {
+    agent: 'system',
+    kind: 'result',
+    text: `Ergebnis: ${ev.subtype ?? 'ok'}${ev.duration_ms ? ` · ${Math.round(ev.duration_ms / 1000)}s` : ''}`,
+  })
+
+  const offen = new Set(s.pendingAgents.values())
+  for (const n of state.nodes) {
+    if (n.id === 'orchestrator' || n.status !== 'running') continue
+    if (n.quelle === 'rollenlauf') continue
+    if (offen.has(n.id)) {
+      setNode(s, n.id, { phase: 'im Hintergrund — kein Ergebnis in dieser Runde' })
+      push(s, { agent: n.id, kind: 'error', text: 'Runde endete ohne Rückmeldung dieser Rolle' })
+      continue
     }
+    setNode(s, n.id, { status: 'done', phase: 'zurückgemeldet', endedAt: now() })
+  }
+
+  setNode(s, 'orchestrator', { phase: 'Antwort abgeschlossen' })
+  const delegiert = state.nodes.some((n) => n.id !== 'orchestrator' && n.calls > 0)
+  if (state.roles.length && !delegiert) {
     push(s, {
       agent: 'system',
-      kind: 'result',
-      text: `Ergebnis: ${ev.subtype ?? 'ok'}${ev.duration_ms ? ` · ${Math.round(ev.duration_ms / 1000)}s` : ''}`,
+      kind: 'error',
+      text: 'Runde beendet, ohne eine einzige Rolle zu beauftragen — Review steht aus.',
     })
-    // Ende der Runde. Wer bis hierhin kein tool_result hatte, hat auch keins
-    // bekommen — das wird gesagt, statt den Knoten stillschweigend auf
-    // „fertig" zu setzen. Rollenläufe laufen unabhängig weiter.
-    const offen = new Set(s.pendingAgents.values())
-    for (const n of state.nodes) {
-      if (n.id === 'orchestrator' || n.status !== 'running') continue
-      if (n.quelle === 'rollenlauf') continue
-      if (offen.has(n.id)) {
-        setNode(s, n.id, { phase: 'im Hintergrund — kein Ergebnis in dieser Runde' })
-        push(s, { agent: n.id, kind: 'error', text: 'Runde endete ohne Rückmeldung dieser Rolle' })
-        continue
-      }
-      setNode(s, n.id, { status: 'done', phase: 'zurückgemeldet', endedAt: now() })
-    }
-    setNode(s, 'orchestrator', { phase: 'Antwort abgeschlossen' })
-    const delegiert = state.nodes.some((n) => n.id !== 'orchestrator' && n.calls > 0)
-    if (state.roles.length && !delegiert) {
-      push(s, {
-        agent: 'system',
-        kind: 'error',
-        text: 'Runde beendet, ohne eine einzige Rolle zu beauftragen — Review steht aus.',
-      })
-    }
-    emit(s, 'state', state)
+  }
+  emit(s, 'state', state)
+}
+
+/** Main event handler dispatcher. */
+function handleEvent(s: Session, ev: any) {
+  if (ev.type === 'system') {
+    handleSystemEvent(s, ev)
+  } else if (ev.type === 'assistant') {
+    handleAssistantEvent(s, ev)
+  } else if (ev.type === 'user') {
+    handleUserEvent(s, ev)
+  } else if (ev.type === 'result') {
+    handleResultEvent(s, ev)
   }
 }
 
@@ -669,6 +711,12 @@ function describeTool(name: string, input: any): string {
   return name
 }
 
+/**
+ * Sends a message to a running session's stdin.
+ * @param id - Session ID
+ * @param text - Message text to send
+ * @returns true if sent, false if session is not running or stdin is not writable
+ */
 export function sendMessage(id: string, text: string): boolean {
   const s = registry.get(id)
   if (!s?.child?.stdin.writable) return false
@@ -690,6 +738,11 @@ function beende(child: ChildProcessWithoutNullStreams, grund: string) {
   }, GRACE_SEC * 1000).unref?.()
 }
 
+/**
+ * Stops a running session and any active role processes.
+ * @param id - Session ID
+ * @returns true if session was stopped, false if session not found or already stopped
+ */
 export function stopSession(id: string): boolean {
   const s = registry.get(id)
   if (!s) return false
@@ -735,6 +788,11 @@ async function abgelegteSessions(): Promise<SessionState[]> {
 
 /** Sessions im Speicher haben Vorrang; von der Platte kommt dazu, was der
  *  laufende Serverprozess nicht mehr kennt. */
+/**
+ * Lists all sessions: currently running in memory and persisted from disk.
+ * In-memory sessions have priority; disk-persisted sessions not in memory are included.
+ * @returns Array of SessionState objects, sorted by startedAt descending
+ */
 export async function listSessions(): Promise<SessionState[]> {
   const live = [...registry.values()].map((s) => s.state)
   const bekannt = new Set(live.map((s) => s.id))
@@ -745,6 +803,12 @@ export async function listSessions(): Promise<SessionState[]> {
 /** Nimmt eine unterbrochene Session wieder auf: der Stand kommt von der
  *  Platte, die Unterhaltung über `--resume` von Claude. Schlägt der Resume
  *  fehl, wird das gesagt statt still in eine leere Session zu laufen. */
+/**
+ * Resumes an interrupted session from disk.
+ * Loads the session state and conversation ID, then restarts the Claude process with --resume.
+ * @param id - Session ID
+ * @returns Promise resolving to {ok: true, state: SessionState} or {ok: false, error: string}
+ */
 export async function resumeSession(
   id: string
 ): Promise<{ ok: boolean; error?: string; state?: SessionState }> {
@@ -803,6 +867,13 @@ export async function resumeSession(
   return { ok: true, state }
 }
 
+/**
+ * Subscribes to a session's event stream.
+ * Sends initial state immediately, then streams events as they occur (state, nodes, tokens, antwort, end).
+ * @param id - Session ID
+ * @param send - Callback function to receive SSE-formatted chunks
+ * @returns Unsubscribe function, or null if session not found
+ */
 export function subscribe(id: string, send: (chunk: string) => void): (() => void) | null {
   const s = registry.get(id)
   if (!s) return null
@@ -839,8 +910,11 @@ async function schreibeRollenbericht(s: Session, rolle: string, text: string) {
 async function persist(s: Session) {
   const { state } = s
   try {
-    await fs.mkdir(RUNS_DIR, { recursive: true })
-    await fs.mkdir(REPORTS_DIR, { recursive: true })
+    await withRetry(async () => {
+      await fs.mkdir(RUNS_DIR, { recursive: true })
+      await fs.mkdir(REPORTS_DIR, { recursive: true })
+    }, 2)
+
     if (s.lastAssistantText.trim()) {
       const report = path.join(REPORTS_DIR, `${state.id}.md`)
       const head = [
@@ -856,22 +930,53 @@ async function persist(s: Session) {
         '---',
         '',
       ].join('\n')
-      await fs.writeFile(report, head + s.lastAssistantText, 'utf8')
+      await withRetry(
+        () => fs.writeFile(report, head + s.lastAssistantText, 'utf8'),
+        2
+      )
       state.reportPath = report
     }
-    await fs.writeFile(
-      path.join(RUNS_DIR, `${state.id}.json`),
-      JSON.stringify(state, null, 2),
-      'utf8'
+    await withRetry(
+      () =>
+        fs.writeFile(
+          path.join(RUNS_DIR, `${state.id}.json`),
+          JSON.stringify(state, null, 2),
+          'utf8'
+        ),
+      2
     )
-  } catch {
+  } catch (err) {
     /* Ablage ist ein Extra — ein Fehler hier darf den Lauf nicht kippen */
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to persist session:', err)
+    }
   }
 }
 
 // ---------------------------------------------------------------- Pipeline
 
 const execFile = promisify(execFileCb)
+
+/** Executes an async operation with exponential backoff retry. */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxAttempts: number = 3,
+  baseDelayMs: number = 100
+): Promise<T> {
+  let lastError: Error | undefined
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      return await fn()
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err))
+      if (attempt < maxAttempts - 1) {
+        const delay = baseDelayMs * Math.pow(2, attempt)
+        await new Promise((r) => setTimeout(r, delay))
+      }
+    }
+  }
+  throw lastError || new Error('Operation failed after retries')
+}
 
 /** Standardauftrag eines Rollenlaufs, wenn der Stand NICHT mitgegeben wird.
  *  Jeder andere Text ist erlaubt — damit taugt der Lauf auch für Umsetzung,
@@ -907,10 +1012,15 @@ export interface Arbeitsstand {
 async function sammleArbeitsstand(project: string): Promise<Arbeitsstand | null> {
   const git = async (args: string[]) =>
     (
-      await execFile('git', ['-C', project, ...args], {
-        maxBuffer: 32 * 1024 * 1024,
-        timeout: 20000,
-      })
+      await withRetry(
+        () =>
+          execFile('git', ['-C', project, ...args], {
+            maxBuffer: 32 * 1024 * 1024,
+            timeout: 20000,
+          }),
+        2,
+        100
+      )
     ).stdout
 
   try {
@@ -922,7 +1032,10 @@ async function sammleArbeitsstand(project: string): Promise<Arbeitsstand | null>
   let status = ''
   try {
     status = await git(['status', '--porcelain', '--untracked-files=all'])
-  } catch {
+  } catch (err) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('git status failed:', err)
+    }
     return null
   }
   const zeilen = status.split('\n').filter((l) => l.trim())
@@ -931,8 +1044,11 @@ async function sammleArbeitsstand(project: string): Promise<Arbeitsstand | null>
   let diff = ''
   try {
     diff = await git(['diff', 'HEAD'])
-  } catch {
+  } catch (err) {
     /* z. B. Repo ohne ersten Commit — dann zählen nur die neuen Dateien */
+    if (process.env.NODE_ENV === 'development') {
+      console.error('git diff failed:', err)
+    }
   }
 
   const teile = ['### Geänderte Dateien\n\n```\n' + status.trim() + '\n```']
@@ -1093,6 +1209,17 @@ async function laufeRolle(
 /** Startet die gewählten Rollen als eigene Sessions — parallel, mit
  *  Zeitgrenze, eigenem Auftrag und eigener Abrechnung. Das ist der Weg, der
  *  nicht davon abhängt, dass der Orchestrator das Agent-Tool benutzt. */
+/**
+ * Runs roles as independent sessions (pipeline mode).
+ * Roles execute in parallel with a time limit and are independent from the orchestrator.
+ * Results are collected and added to the session's answers.
+ * @param id - Session ID
+ * @param rollen - Array of role names to execute
+ * @param opts.model - Override model for all roles (optional; uses role's model if not set)
+ * @param opts.auftrag - Custom task prompt (optional; uses PRUEFAUFTRAG or PRUEFAUFTRAG_MIT_STAND if not set)
+ * @param opts.stand - Include working state in the task (default: true if changes exist)
+ * @returns Promise resolving to {ok: true} or {ok: false, error: string}
+ */
 export async function runPipeline(
   id: string,
   rollen: string[],
