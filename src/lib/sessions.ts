@@ -267,14 +267,6 @@ export function cliText(args: string[]): string {
   return [CLAUDE_BIN, ...teile].join(' ')
 }
 
-export function cliPreview(opts: {
-  model: string
-  skipPermissions: boolean
-  roles?: string[]
-}): string {
-  return cliText(buildArgs(opts))
-}
-
 export function startSession(opts: {
   project: string
   model: string
@@ -712,10 +704,6 @@ export function stopSession(id: string): boolean {
   s.rollenProzesse.clear()
   if (s.child) beende(s.child, 'Abbruch der Session')
   return true
-}
-
-export function getSession(id: string): SessionState | null {
-  return registry.get(id)?.state ?? null
 }
 
 /** Abgelegte Läufe von der Platte. Sessions, die dort als laufend stehen,
